@@ -1,0 +1,32 @@
+{
+    "key": "design-integrate",
+    "name": "Mockup Design Integration",
+    "description": "Integrate with numerous different design services such as Figma and XD",
+    "baseUrl": "https://d2132a9d0623.ngrok.io",
+    "authentication": {
+        "type": "none"
+    },
+    "scopes": [
+        "READ", "WRITE", "DELETE", "ADMIN"
+    ],
+    "vendor": {
+        "name": "Jenearly Ang (Pepper) & Yenith LianTyHao (Design Troll)"
+    },
+    "apiVersion": 1,
+    "modules": {
+        "webPanels": [
+            {
+                "url": "/index.html",
+                "location": "atl.jira.view.issue.left.context",
+                "layout": {
+                    "width": "100%",
+                    "height": "400px"
+                },
+                "name": {
+                    "value": "Mockup Design Integration"
+                },
+                "key": "summary"
+            }
+        ]
+    }
+}
