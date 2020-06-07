@@ -2,7 +2,7 @@
     "key": "design-integrate",
     "name": "Mockup Design Integration",
     "description": "Integrate with numerous different design services such as Figma and XD",
-    "baseUrl": "https://d2132a9d0623.ngrok.io",
+    "baseUrl": "https://mockintegration.talkincloud.io",
     "authentication": {
         "type": "none"
     },
