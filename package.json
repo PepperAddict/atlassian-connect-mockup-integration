@@ -2,6 +2,7 @@
   "name": "design-integration",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "@atlaskit/media-picker": "^49.0.3",
     "@atlaskit/media-test-helpers": "^27.2.1",
