@@ -14,10 +14,9 @@ export default function ApiCall(props: ApiCall) {
     const [error, setError] = useState(false);
     const [issueKey] = useState(props.issueKey);
     const [currentMock, setCurrentMock] = useState({ "summary": null } as any);
-    const [iframe, setIframe] = useState(null as any);
     const [description, addDescription] = useState(null as any)
 
-    const APGetProperties = async (issue, key = 'proj') => {
+    const APGetProperties = async ( key = designIntegrateSummary) => {
 
         const properties = await props.AP.request(`/rest/api/3/issue/${issueKey}/properties/${key}`,
         ).then((data) => {
@@ -39,7 +38,7 @@ export default function ApiCall(props: ApiCall) {
 
     useEffect(() => {
         try {
-            APGetProperties(issueKey, designIntegrateSummary)
+            APGetProperties(designIntegrateSummary)
 
         } catch {
             console.log('none')
@@ -65,32 +64,32 @@ export default function ApiCall(props: ApiCall) {
         });
     }
 
-    const apiCommunication = async (service, id, issue = issueKey) => {
+    const apiCommunication = async (service, id) => {
         if (service === 'Figma') {
             const apiId = `figma-${id}`;
             if (id) {
+                const token = process.env.REACT_APP_FIGMA as string
                 const figma = await fetch(`https://api.figma.com/v1/files/${id}`, {
                     headers: {
-                        "X-Figma-Token": `${process.env.FIGMA}`
+                        "X-Figma-Token": token
                     }
                 })
                 await figma.json().then(async (res) => {
                     const figmaFile = "https://figma.com/file/" + id
+                    console.log(res)
 
-                    const figmaObject = JSON.stringify({ 
-                    "summary": {
-                        "type": service,
-                        "id": apiId,
-                        "name": res.name,
-                        "iframe": null,
-                        "url": figmaFile,
-                        "thumbnail": res.thumbnailUrl,
-                        "lastEdited": res.lastModified 
-                    }
-
-                })
+                    const figmaObject = JSON.stringify({
+                        "summary": {
+                            "type": service,
+                            "id": apiId,
+                            "name": res.name,
+                            "iframe": null,
+                            "url": figmaFile,
+                            "thumbnail": res.thumbnailUrl,
+                            "lastEdited": res.lastModified
+                        }
+                    })
                     apiEntityWrite(figmaObject)
-
                 })
             } else {
                 console.log('Sorry, could not find an ID')
@@ -99,24 +98,24 @@ export default function ApiCall(props: ApiCall) {
         }
     }
 
-    const invisio = async (url, version, id = null) => {
+    const iFrameIt = async (url, service) => {
         let thumbnail = null as any;
         const arr_url = url.split('.')
         const last = arr_url[arr_url.length - 1];
-        const img = (last === 'jpg') ? thumbnail = url : thumbnail = invLogo
+        const logo = (service === 'Invision') && invLogo
 
+        const img = (last === 'jpg') ? thumbnail = url : thumbnail = logo
 
-
-        const invisData = JSON.stringify({
+        const iFrameData = JSON.stringify({
             "summary": {
-                "type": "Invision",
+                "type": service,
                 "thumbnail": img,
                 "url": url,
                 "iframe": url
             }
         })
 
-        apiEntityWrite(invisData)
+        apiEntityWrite(iFrameData)
 
     }
     const imageCommunication = async (url) => {
@@ -136,7 +135,7 @@ export default function ApiCall(props: ApiCall) {
         const userInput = url.split('/')
         const urlSplit = url.split('.')
         const urlEnding = urlSplit[urlSplit.length - 1]
-        const isimg = /jpeg|jpg|png|svg/g;
+        const isimg = /jpeg|jpg|png/g;
         const isItAnImage = urlEnding.match(isimg)
 
         if (userInput.length > 1 && !isItAnImage) {
@@ -151,7 +150,10 @@ export default function ApiCall(props: ApiCall) {
                 case findService('figma'):
                     const id = userInput[4];
                     setError(false)
-                    apiCommunication('Figma', id, issueKey)
+                    apiCommunication('Figma', id)
+                    break;
+                case findService('animaapp'):
+                    iFrameIt(url, "Anima");
                     break;
                 case findService('xd'):
                     console.log('this is xd');
@@ -164,7 +166,7 @@ export default function ApiCall(props: ApiCall) {
                 case findService('invis'):
                     setError(false)
                     const invid = userInput[3]
-                    invisio(url, 'simple', invid)
+                    iFrameIt(url, "Invision")
                     break;
                 default:
                     console.log('no recognized service')
@@ -204,30 +206,35 @@ export default function ApiCall(props: ApiCall) {
     return (
         <Fragment>
             <form onSubmit={checkForm}>
-                <label>
-                    <p>Mock URL!</p>
+                <label className="url-input">
+                    <p>Mockup URL</p>
                     <input name="url" placeholder="http://..." onChange={e => setUrl(e.target.value)} />
-                    <button type="submit">Mock Cloud URL</button>
+                    <button type="submit">Submit</button>
                 </label>
             </form>
 
             {currentMock.summary ? <div className="showProject">
 
-                {currentMock.summary.iframe ? <div className="iframe-container">
-                    <iframe id="protoframe" src={currentMock.summary.iframe}></iframe></div> : 
-                    <div className="img-container"><img src={currentMock.summary.thumbnail} /></div>}
-                <div>
+                {currentMock.summary.iframe ? 
+                <div className="iframe-container">
+                    
+                    <iframe id="protoframe" src={currentMock.summary.iframe}></iframe></div> :
+                    <div className="img-container">
+                        <img src={currentMock.summary.thumbnail} />
+                    </div>}
+                <div className="summary-content">
+                    <button className="remove-button" onClick={e => removeMock(e)}>✖</button>
                     <p>Service: {currentMock.summary.type}</p>
-                    {currentMock.summary.lastEdited && <p>last modified: {moment(currentMock.summary.lastEdited).format('MMMM Do YYYY, h:mm:ss a')} | {moment(currentMock.summary.lastEdited).fromNow()}</p>}
-                    {currentMock.summary.url && <p>Link: <a href={currentMock.summary.url}>{currentMock.summary.type} Link</a></p>}
-                    <button className="remove-button" onClick={e => removeMock(e)}> Remove Mock</button>
-                    <form onSubmit={submitDescription}>
+                    {currentMock.summary.lastEdited &&
+                        <p>last modified: {moment(currentMock.summary.lastEdited).format('MMMM Do YYYY, h:mm:ss a')} | {moment(currentMock.summary.lastEdited).fromNow()}</p>}
+                    {currentMock.summary.url && <p>Link: <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type} Link</a></p>}
+                    
+                    <form className="description-container" onSubmit={submitDescription}>
                         <label>
                             Description
                             <textarea name="description" onChange={e => addDescription(e.target.value)} defaultValue={(currentMock.description) ? currentMock.description : null} />
-                            <button type="submit">Submit Description</button>
+                            <button className="description-button" type="submit">Submit Description</button>
                         </label>
-
                     </form>
                 </div>
             </div> : <p>Nothing attached</p>}
