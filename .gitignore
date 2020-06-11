@@ -8,7 +8,7 @@
 .env1
 # testing
 /coverage
-
+*.lock
 # production
 /build
 

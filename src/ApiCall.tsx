@@ -18,7 +18,7 @@ export default function ApiCall(props: ApiCall) {
 
     const APGetProperties = async ( key = designIntegrateSummary) => {
 
-        const properties = await props.AP.request(`/rest/api/3/issue/${issueKey}/properties/${key}`,
+        await props.AP.request(`/rest/api/3/issue/${issueKey}/properties/${key}`,
         ).then((data) => {
             if (data.xhr.status === 200) {
                 return data.body
@@ -44,7 +44,7 @@ export default function ApiCall(props: ApiCall) {
             console.log('none')
         }
 
-    }, [])
+    })
 
 
 
@@ -76,7 +76,6 @@ export default function ApiCall(props: ApiCall) {
                 })
                 await figma.json().then(async (res) => {
                     const figmaFile = "https://figma.com/file/" + id
-                    console.log(res)
 
                     const figmaObject = JSON.stringify({
                         "summary": {
@@ -219,9 +218,9 @@ export default function ApiCall(props: ApiCall) {
                 {currentMock.summary.iframe ? 
                 <div className="iframe-container">
                     
-                    <iframe id="protoframe" src={currentMock.summary.iframe}></iframe></div> :
+                    <iframe title="design-thumbnail" id="protoframe" src={currentMock.summary.iframe}></iframe></div> :
                     <div className="img-container">
-                        <img src={currentMock.summary.thumbnail} />
+                        <img src={currentMock.summary.thumbnail} alt="image thumbnail"/>
                     </div>}
                 <div className="summary-content">
                     <button className="remove-button" onClick={e => removeMock(e)}>✖</button>
