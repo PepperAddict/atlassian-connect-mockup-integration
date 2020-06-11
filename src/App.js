@@ -13,7 +13,7 @@ function App() {
 
  useEffect(() => {
 
-    (AP) && AP.context.getContext(async (res) => {
+    AP.context.getContext(async (res) => {
     await setIssueKey(res.jira.issue.key)
     await setIssueId(res.jira.issue.id)
    })
@@ -23,7 +23,7 @@ function App() {
   return (
     <div className="App">
       <section id="content" className="ac-content">
-        {issueKey && AP && <ApiCall issueKey={issueKey} issueId={issueId} AP={AP}/>}
+        {issueKey && <ApiCall issueKey={issueKey} issueId={issueId} AP={AP}/>}
       </section>
 
     </div>
