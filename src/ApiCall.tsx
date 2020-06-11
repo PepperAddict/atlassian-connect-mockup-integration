@@ -102,7 +102,8 @@ export default function ApiCall(props: ApiCall) {
         let thumbnail = null as any;
         const arr_url = url.split('.')
         const last = arr_url[arr_url.length - 1];
-        const logo = (service === 'Invision') && invLogo
+        const logo = (service === 'Invision') && invLogo;
+
 
         const img = (last === 'jpg') ? thumbnail = url : thumbnail = logo
 

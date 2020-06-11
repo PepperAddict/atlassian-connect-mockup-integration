@@ -2,7 +2,12 @@
 
 Welcome to Mockup Integration brought to you by Jenearly and Yenith. 
 
-Currently the plugin works with Figma, Sketch, XD, and your usual image links such as `jpeg`, `jpg`, and `png`. Also available is custom description for your mock. 
+Currently the plugin works with Figma, Invision, Anima, and your usual image links such as `jpeg`, `jpg`, and `png`. Also available is custom description for your mock. 
+
+## Install 
+
+If you would like to install this on your Jira environment, add this app: 
+`https://mockintegration.talkincloud.io/atlassian-connect.json`
 
 
 ## Why Mockup Integration
