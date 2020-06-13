@@ -18,7 +18,7 @@ export default function ApiCall(props: ApiCall) {
 
     const APGetProperties = async ( key = designIntegrateSummary) => {
 
-        await props.AP.request(`/rest/api/3/issue/${issueKey}/properties/${key}`,
+        return await props.AP.request(`/rest/api/3/issue/${issueKey}/properties/${key}`,
         ).then((data) => {
             if (data.xhr.status === 200) {
                 return data.body
@@ -44,7 +44,7 @@ export default function ApiCall(props: ApiCall) {
             console.log('none')
         }
 
-    })
+    }, [])
 
 
 

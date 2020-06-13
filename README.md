@@ -7,7 +7,7 @@ Currently the plugin works with Figma, Invision, Anima, and your usual image lin
 ## Install 
 
 If you would like to install this on your Jira environment, add this app: 
-`https://mockintegration.talkincloud.io/atlassian-connect.json`
+`https://jira-design.herokuapp.com/atlassian-connect.json`
 
 
 ## Why Mockup Integration
