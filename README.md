@@ -2,7 +2,7 @@
 
 Welcome to Mockup Integration brought to you by Jenearly and Yenith. 
 
-Currently the plugin works with Figma, Invision, Anima, and your usual image links such as `jpeg`, `jpg`, and `png`. Also available is custom description for your mock. 
+Currently the plugin works with `Figma`, `XD`, `Invision`, `Anima`, and your usual image links such as `jpeg`, `jpg`, and `png`. Custom description is also available for your Mock up.
 
 ## Install 
 
@@ -12,7 +12,7 @@ If you would like to install this on your Jira environment, add this app:
 
 ## Why Mockup Integration
 
-Mockup integration is an addon that shows right on the current Jira issue ticket. Which ever Mock/Prototype URL you may have and users would be able to correlate it to the current task. 
+Mockup integration is an addon that shows right on the current Jira issue ticket. Which ever Mockup URL you may have and users would be able to correlate it to the current task. 
 
 ## How was it built?
 
