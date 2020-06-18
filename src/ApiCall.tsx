@@ -14,9 +14,12 @@ export default function ApiCall(props: ApiCall) {
     const [error, setError] = useState(false);
     const [issueKey] = useState(props.issueKey);
     const [currentMock, setCurrentMock] = useState({ "summary": null } as any);
-    const [description, addDescription] = useState(null as any)
+    const [description, addDescription] = useState(null as any);
+    const [setup, setSetup] = useState(false as boolean)
 
-    const APGetProperties = async ( key = designIntegrateSummary) => {
+
+
+    const APGetProperties = async (key = designIntegrateSummary) => {
 
         return await props.AP.request(`/rest/api/3/issue/${issueKey}/properties/${key}`,
         ).then((data) => {
@@ -29,10 +32,8 @@ export default function ApiCall(props: ApiCall) {
         }).then(async (res) => {
             const responseJson = JSON.parse(res)
             console.log(responseJson)
-
             await setCurrentMock(responseJson.value)
-
-
+            setSetup(true)
         });
     }
 
@@ -121,10 +122,12 @@ export default function ApiCall(props: ApiCall) {
     const imageCommunication = async (url) => {
         const imageData = JSON.stringify({
             "summary": {
-                "type": "custom",
+                "type": "Image",
                 "thumbnail": url,
+                "url": url,
                 "iframe": null,
-                "lastEdited": new Date()
+                "lastEdited": null,
+                "added": new Date()
             }
         })
         apiEntityWrite(imageData)
@@ -187,9 +190,10 @@ export default function ApiCall(props: ApiCall) {
             data: `{"summary": null}`,
             experimental: true
         }).then((res) => {
-            console.log('deleted')
-            setCurrentMock({ "summary": null })
-            addDescription(null)
+            // console.log('deleted')
+            // setCurrentMock({ "summary": null })
+            // addDescription(null)
+            setSetup(false)
         }).catch((err) => {
             console.log(err)
         });
@@ -205,30 +209,25 @@ export default function ApiCall(props: ApiCall) {
 
     return (
         <Fragment>
-            <form onSubmit={checkForm}>
-                <label className="url-input">
-                    <p>Mockup URL</p>
-                    <input name="url" placeholder="http://..." onChange={e => setUrl(e.target.value)} />
-                    <button type="submit">Submit</button>
-                </label>
-            </form>
-
-            {currentMock.summary ? <div className="showProject">
-
-                {currentMock.summary.iframe ? 
-                <div className="iframe-container">
-                    
-                    <iframe title="design-thumbnail" id="protoframe" src={currentMock.summary.iframe}></iframe></div> :
+            {setup ? <div className="showProject">
+                {currentMock.summary.iframe ?
+                    <div className="iframe-container">
+                        <iframe title="design-thumbnail" id="protoframe" src={currentMock.summary.iframe}></iframe></div> :
                     <div className="img-container">
-                        <img src={currentMock.summary.thumbnail} alt="image thumbnail"/>
+                        <img src={currentMock.summary.thumbnail} alt="image thumbnail" />
                     </div>}
+
                 <div className="summary-content">
-                    <button className="remove-button" onClick={e => removeMock(e)}>✖</button>
+                    <span className="remove-master" onClick={e=> removeMock(e)}>
+                    <button className="remove-button">✖</button>
+                    <span className="surprise-show">Enter New Mockup URL</span>
+                    </span>
                     <p>Service: {currentMock.summary.type}</p>
-                    {currentMock.summary.lastEdited &&
-                        <p>last modified: {moment(currentMock.summary.lastEdited).format('MMMM Do YYYY, h:mm:ss a')} | {moment(currentMock.summary.lastEdited).fromNow()}</p>}
+                    {currentMock.summary.lastEdited ?
+                        <p>last modified: {moment(currentMock.summary.lastEdited).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.lastEdited).fromNow()}</p>
+                    : <p>Added: {moment(currentMock.summary.added).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.added).fromNow()}</p>}
                     {currentMock.summary.url && <p>Link: <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type} Link</a></p>}
-                    
+
                     <form className="description-container" onSubmit={submitDescription}>
                         <label>
                             Description
@@ -237,7 +236,19 @@ export default function ApiCall(props: ApiCall) {
                         </label>
                     </form>
                 </div>
-            </div> : <p>Nothing attached</p>}
+            </div> :
+
+                <div>
+                    <form onSubmit={checkForm}>
+                        <label className="url-input">
+                            <p>Mockup URL</p>
+                            <input name="url" placeholder="http://..." onChange={e => setUrl(e.target.value)} />
+                            <button type="submit">Submit</button>
+                        </label>
+                    </form>
+                    <p>Nothing attached</p>
+                </div>
+            }
 
         </Fragment>
     )

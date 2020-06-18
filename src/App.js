@@ -7,7 +7,7 @@ function App() {
 
   const [issueKey, setIssueKey] = useState(null)
   const [issueId, setIssueId] = useState(null)
-  console.log(AP)
+
  useEffect(() => {
 
     AP.context.getContext(async (res) => {

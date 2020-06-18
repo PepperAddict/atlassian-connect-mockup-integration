@@ -56,15 +56,14 @@
 
 .showProject {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 300px 1fr;
   max-height: 330px;
   height: 100%;
   overflow: hidden;
-  grid-gap: 10px;
   box-sizing: border-box;
   text-align: left;
   padding: 5px;
-  margin: 10px 0 0 0;
+  margin: 0;
   background: #f1f1f1;
 }
 
@@ -95,8 +94,12 @@
 
 .summary-content {
   display: grid;
-  grid-template-rows: repeat(auto-fit, minmax(10px, 30px)) [last-row] 100px;
   position: relative;
+  padding: 5px;
+  box-sizing: border-box;
+  border-left: 1px solid #ccc;
+  margin-left: 10px;
+  padding-left: 10px;
 }
 
 .summary-content label {
@@ -113,18 +116,33 @@
 .summary-content textarea {
   height: 100px;
   box-sizing: border-box;
-  background: none;
-  border: 0px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid #ccc;
 }
 
-
+.remove-master {
+  position: fixed;
+  width: 300px;
+  bottom: 0px;
+  left: 0px;
+  display: flex
+}
 .remove-button {
-  position: absolute;
-  top: 0px;
-  right: 10px;
   border: 0px;
-  background: none;
+  background: white;
   font-size: 1.5rem;
   cursor: pointer;
+}
 
+.surprise-show {
+  opacity: 0;
+}
+
+.remove-master:hover .surprise-show {
+  display: block;
+  opacity: 1;
+  transition: 2s;
+  background: white;
+  padding: 7px;
+  cursor: pointer 
 }
