@@ -180,6 +180,9 @@ export default function ApiCall(props: ApiCall) {
         }
 
     }
+    const modifyMock = async e => {
+        setSetup(false)
+    }
 
     const removeMock = async e => {
         e.preventDefault();
@@ -190,10 +193,9 @@ export default function ApiCall(props: ApiCall) {
             data: `{"summary": null}`,
             experimental: true
         }).then((res) => {
-            // console.log('deleted')
-            // setCurrentMock({ "summary": null })
-            // addDescription(null)
-            setSetup(false)
+            console.log('deleted')
+            setCurrentMock({ "summary": null })
+            addDescription(null)
         }).catch((err) => {
             console.log(err)
         });
@@ -209,7 +211,7 @@ export default function ApiCall(props: ApiCall) {
 
     return (
         <Fragment>
-            {setup ? <div className="showProject">
+            {setup && currentMock.summary ? <div className="showProject">
                 {currentMock.summary.iframe ?
                     <div className="iframe-container">
                         <iframe title="design-thumbnail" id="protoframe" src={currentMock.summary.iframe}></iframe></div> :
@@ -218,7 +220,7 @@ export default function ApiCall(props: ApiCall) {
                     </div>}
 
                 <div className="summary-content">
-                    <span className="remove-master" onClick={e=> removeMock(e)}>
+                    <span className="remove-master" onClick={e=> modifyMock(e)}>
                     <button className="remove-button">✖</button>
                     <span className="surprise-show">Enter New Mockup URL</span>
                     </span>
@@ -238,18 +240,26 @@ export default function ApiCall(props: ApiCall) {
                 </div>
             </div> :
 
-                <div>
-                    <form onSubmit={checkForm}>
-                        <label className="url-input">
-                            <p>Mockup URL</p>
-                            <input name="url" placeholder="http://..." onChange={e => setUrl(e.target.value)} />
-                            <button type="submit">Submit</button>
-                        </label>
+                <div className="input-container">
+                    <form onSubmit={checkForm} >
+                        <label htmlFor="url" className="url-input">Mockup URL</label>
+                        <span className="input-button"><input id="url" name="url" placeholder="http://..." onChange={e => setUrl(e.target.value)} />
+                            <button type="submit">Attach Mockup</button>
+                        </span>
                     </form>
-                    <p>Nothing attached</p>
+                    {currentMock.summary ? <Fragment>
+                    <div className="quick-summary taken">
+                    <p>Added on {moment(currentMock.summary.added).format('MMMM Do')}, {moment(currentMock.summary.added).fromNow()}</p>
+                    <p>Service: <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type}</a></p>
+                    <button className="description-button" onClick={removeMock} >Remove Attachment</button>
+                    </div> 
+                    <button className="back-button" onClick={() => setSetup(true)}>BACK</button>
+                    </Fragment>: 
+                    <div className="quick-summary empty">
+                        <p>No Mockup Attached.</p>
+                    </div>}
                 </div>
             }
-
         </Fragment>
     )
 }
