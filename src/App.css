@@ -39,6 +39,12 @@
   font-weight: bolder;
   font-size: 1.2rem;
   text-transform: capitalize;
+  cursor: pointer;
+  transition: .2s;
+}
+.input-button button:hover {
+  background: rgba(0, 82, 204, 0.9);
+  transition: .2s;
 }
 .App-logo {
   height: 40vmin;
@@ -90,10 +96,9 @@
 }
 
 .showProject .img-container {
-  max-height: 350px;
+  max-height: 300px;
   height: 100%;
   box-sizing: border-box;
-  padding: 5px;
   background: #ccc;
 }
 .showProject img {
@@ -140,6 +145,12 @@
   border: 1px solid #D9D9D9;
   background: white;
   cursor: pointer;
+  height: 40px;
+  transition: .2s;
+}
+.description-button:hover {
+  background: #ccc;
+  transition: .2s;
 }
 
 .summary-content textarea {
@@ -221,5 +232,16 @@
   margin-top: 10px;
   padding: 10px 20px;
   cursor: pointer;
+  transition: .2s;
+}
+.back-button:hover {
+  transition: .2s;
+  background: #ccc;
 }
 
+.error-message {
+  background: #E30000;
+  padding: 15px;
+  color: white;
+  text-transform: capitalize;
+}

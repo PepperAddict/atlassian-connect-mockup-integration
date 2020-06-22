@@ -33,6 +33,7 @@ export default function ApiCall(props: ApiCall) {
             const responseJson = JSON.parse(res)
             console.log(responseJson)
             await setCurrentMock(responseJson.value)
+            await responseJson.description && addDescription(responseJson.description)
             setSetup(true)
         });
     }
@@ -131,6 +132,8 @@ export default function ApiCall(props: ApiCall) {
             }
         })
         apiEntityWrite(imageData)
+        setSetup(true)
+        setError(false)
     }
 
     const checkForm = async (e) => {
@@ -139,7 +142,8 @@ export default function ApiCall(props: ApiCall) {
         const urlSplit = url.split('.')
         const urlEnding = urlSplit[urlSplit.length - 1]
         const isimg = /jpeg|jpg|png/g;
-        const isItAnImage = urlEnding.match(isimg)
+        const isItAnImage = urlEnding.match(isimg);
+        console.log(isItAnImage)
 
         if (userInput.length > 1 && !isItAnImage) {
             const cloudUrl = userInput[2]
@@ -153,30 +157,33 @@ export default function ApiCall(props: ApiCall) {
                 case findService('figma'):
                     const id = userInput[4];
                     setError(false)
+                    setSetup(true)
                     apiCommunication('Figma', id)
                     break;
                 case findService('animaapp'):
                     iFrameIt(url, "Anima");
+                    setSetup(true)
+                    setError(false)
                     break;
                 case findService('xd'):
                     console.log('this is xd');
+                    setSetup(true)
                     setError(false);
-                    break;
-                case findService('google'):
-                    console.log('this is google');
-                    setError(false)
                     break;
                 case findService('invis'):
                     setError(false)
                     const invid = userInput[3]
+                    setSetup(true)
                     iFrameIt(url, "Invision")
                     break;
                 default:
                     console.log('no recognized service')
                     setError(true)
             }
-        } else {
+        } else if (isItAnImage) {
             imageCommunication(url)
+        } else {
+            setError(true)
         }
 
     }
@@ -211,7 +218,7 @@ export default function ApiCall(props: ApiCall) {
 
     return (
         <Fragment>
-            {setup && currentMock.summary ? <div className="showProject">
+            {setup && currentMock.summary && !error ? <div className="showProject">
                 {currentMock.summary.iframe ?
                     <div className="iframe-container">
                         <iframe title="design-thumbnail" id="protoframe" src={currentMock.summary.iframe}></iframe></div> :
@@ -224,15 +231,15 @@ export default function ApiCall(props: ApiCall) {
                     <button className="remove-button">✖</button>
                     <span className="surprise-show">Enter New Mockup URL</span>
                     </span>
-                    <p>Service: {currentMock.summary.type}</p>
+                    <p><strong>Service:</strong> {currentMock.summary.type}</p>
                     {currentMock.summary.lastEdited ?
-                        <p>last modified: {moment(currentMock.summary.lastEdited).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.lastEdited).fromNow()}</p>
-                    : <p>Added: {moment(currentMock.summary.added).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.added).fromNow()}</p>}
-                    {currentMock.summary.url && <p>Link: <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type} Link</a></p>}
+                        <p><strong>Last modified:</strong> {moment(currentMock.summary.lastEdited).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.lastEdited).fromNow()}</p>
+                    : <p><strong>Added:</strong> {moment(currentMock.summary.added).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.added).fromNow()}</p>}
+                    {currentMock.summary.url && <p><strong>Link:</strong> <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type} Link</a></p>}
 
                     <form className="description-container" onSubmit={submitDescription}>
                         <label>
-                            Description
+                            <strong>Description</strong>
                             <textarea name="description" onChange={e => addDescription(e.target.value)} defaultValue={(currentMock.description) ? currentMock.description : null} />
                             <button className="description-button" type="submit">Submit Description</button>
                         </label>
@@ -247,13 +254,14 @@ export default function ApiCall(props: ApiCall) {
                             <button type="submit">Attach Mockup</button>
                         </span>
                     </form>
+                    {error && <p className="error-message">Sorry, URL is not supported. Please try the supported</p>}
                     {currentMock.summary ? <Fragment>
                     <div className="quick-summary taken">
                     <p>Added on {moment(currentMock.summary.added).format('MMMM Do')}, {moment(currentMock.summary.added).fromNow()}</p>
                     <p>Service: <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type}</a></p>
                     <button className="description-button" onClick={removeMock} >Remove Attachment</button>
                     </div> 
-                    <button className="back-button" onClick={() => setSetup(true)}>BACK</button>
+                    <button className="back-button" onClick={() => {setSetup(true); setError(false)}}>BACK</button>
                     </Fragment>: 
                     <div className="quick-summary empty">
                         <p>No Mockup Attached.</p>
