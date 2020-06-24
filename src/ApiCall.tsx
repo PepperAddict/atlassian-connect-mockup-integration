@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import moment from 'moment';
 import invLogo from './img/invisionlogo.png'
+import OwnerSelect from './OwnerSelect';
 
 interface ApiCall {
     issueKey: string
@@ -16,9 +17,7 @@ export default function ApiCall(props: ApiCall) {
     const [currentMock, setCurrentMock] = useState({ "summary": null } as any);
     const [description, addDescription] = useState(null as any);
     const [setup, setSetup] = useState(false as boolean);
-    const [ownerList, setOwnerList] = useState(null as any);
-    const [owner, selectOwner] = useState(null as any)
-
+    const [touchOwner, setTouchOwner] = useState(false)
 
 
     const APGetProperties = async (key = designIntegrateSummary) => {
@@ -40,14 +39,6 @@ export default function ApiCall(props: ApiCall) {
         });
     }
 
-    const searchUser = (input) => {
-        props.AP.request(`/rest/api/3/user/picker?query="${input}"`).then((data) => {
-            return JSON.parse(data.body)
-        }).then((res) => {
-            setOwnerList(res.users)
-            console.log(ownerList)
-        })
-    }
 
     useEffect(() => {
         try {
@@ -245,24 +236,11 @@ export default function ApiCall(props: ApiCall) {
                     </span>
 
                     <div>                    
-                        <form>
-                            <label>Owner</label>
-                            <input onChange={e => searchUser(e.target.value)}/>
-                           {ownerList && 
-                            <select id="userList" name="userList" onChange={e => selectOwner(e.target.value)}>
-                            {ownerList.forEach((indi, key) => {
-
-                                return <option key={key} value={indi.accountId}>test {indi.html}</option>
-
-                            })}
-                            </select>}
-
-                        </form>
-
+                    <OwnerSelect AP={props.AP} issueKey={props.issueKey} setTouchOwner={setTouchOwner}/>
                     
                     </div>
-
-                    <p><strong>Service:</strong> {currentMock.summary.type}</p>
+                    { !touchOwner && <Fragment>
+                                            <p><strong>Service:</strong> {currentMock.summary.type}</p>
                     {currentMock.summary.lastEdited ?
                         <p><strong>Last modified:</strong> {moment(currentMock.summary.lastEdited).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.lastEdited).fromNow()}</p>
                         : <p><strong>Added:</strong> {moment(currentMock.summary.added).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.added).fromNow()}</p>}
@@ -275,6 +253,10 @@ export default function ApiCall(props: ApiCall) {
                             <button className="description-button" type="submit">Submit Description</button>
                         </label>
                     </form>
+                    </Fragment>
+                   }
+
+
                 </div>
             </div> :
 
