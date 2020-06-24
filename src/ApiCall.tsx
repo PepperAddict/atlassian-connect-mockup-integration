@@ -15,7 +15,9 @@ export default function ApiCall(props: ApiCall) {
     const [issueKey] = useState(props.issueKey);
     const [currentMock, setCurrentMock] = useState({ "summary": null } as any);
     const [description, addDescription] = useState(null as any);
-    const [setup, setSetup] = useState(false as boolean)
+    const [setup, setSetup] = useState(false as boolean);
+    const [ownerList, setOwnerList] = useState(null as any);
+    const [owner, selectOwner] = useState(null as any)
 
 
 
@@ -38,9 +40,19 @@ export default function ApiCall(props: ApiCall) {
         });
     }
 
+    const searchUser = (input) => {
+        props.AP.request(`/rest/api/3/user/picker?query="${input}"`).then((data) => {
+            return JSON.parse(data.body)
+        }).then((res) => {
+            setOwnerList(res.users)
+            console.log(ownerList)
+        })
+    }
+
     useEffect(() => {
         try {
             APGetProperties(designIntegrateSummary)
+
 
         } catch {
             console.log('none')
@@ -143,7 +155,7 @@ export default function ApiCall(props: ApiCall) {
         const urlEnding = urlSplit[urlSplit.length - 1]
         const isimg = /jpeg|jpg|png/g;
         const isItAnImage = urlEnding.match(isimg);
-        console.log(isItAnImage)
+
 
         if (userInput.length > 1 && !isItAnImage) {
             const cloudUrl = userInput[2]
@@ -227,14 +239,33 @@ export default function ApiCall(props: ApiCall) {
                     </div>}
 
                 <div className="summary-content">
-                    <span className="remove-master" onClick={e=> modifyMock(e)}>
-                    <button className="remove-button">✖</button>
-                    <span className="surprise-show">Enter New Mockup URL</span>
+                    <span className="remove-master" onClick={e => modifyMock(e)}>
+                        <button className="remove-button">✖</button>
+                        <span className="surprise-show">Enter New Mockup URL</span>
                     </span>
+
+                    <div>                    
+                        <form>
+                            <label>Owner</label>
+                            <input onChange={e => searchUser(e.target.value)}/>
+                           {ownerList && 
+                            <select id="userList" name="userList" onChange={e => selectOwner(e.target.value)}>
+                            {ownerList.forEach((indi, key) => {
+
+                                return <option key={key} value={indi.accountId}>test {indi.html}</option>
+
+                            })}
+                            </select>}
+
+                        </form>
+
+                    
+                    </div>
+
                     <p><strong>Service:</strong> {currentMock.summary.type}</p>
                     {currentMock.summary.lastEdited ?
                         <p><strong>Last modified:</strong> {moment(currentMock.summary.lastEdited).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.lastEdited).fromNow()}</p>
-                    : <p><strong>Added:</strong> {moment(currentMock.summary.added).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.added).fromNow()}</p>}
+                        : <p><strong>Added:</strong> {moment(currentMock.summary.added).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.added).fromNow()}</p>}
                     {currentMock.summary.url && <p><strong>Link:</strong> <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type} Link</a></p>}
 
                     <form className="description-container" onSubmit={submitDescription}>
@@ -250,22 +281,22 @@ export default function ApiCall(props: ApiCall) {
                 <div className="input-container">
                     <form onSubmit={checkForm} >
                         <label htmlFor="url" className="url-input">Mockup URL</label>
-                        <span className="input-button"><input id="url" name="url" placeholder="http://..." onChange={e => setUrl(e.target.value)} />
+                        <span className="input-button"><input id="url" name="url" placeholder="https://..." onChange={e => setUrl(e.target.value)} />
                             <button type="submit">Attach Mockup</button>
                         </span>
                     </form>
                     {error && <p className="error-message">Sorry, URL is not supported. Please try the supported</p>}
                     {currentMock.summary ? <Fragment>
-                    <div className="quick-summary taken">
-                    <p>Added on {moment(currentMock.summary.added).format('MMMM Do')}, {moment(currentMock.summary.added).fromNow()}</p>
-                    <p>Service: <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type}</a></p>
-                    <button className="description-button" onClick={removeMock} >Remove Attachment</button>
-                    </div> 
-                    <button className="back-button" onClick={() => {setSetup(true); setError(false)}}>BACK</button>
-                    </Fragment>: 
-                    <div className="quick-summary empty">
-                        <p>No Mockup Attached.</p>
-                    </div>}
+                        <div className="quick-summary taken">
+                            <p>Added on {moment(currentMock.summary.added).format('MMMM Do')}, {moment(currentMock.summary.added).fromNow()}</p>
+                            <p>Service: <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type}</a></p>
+                            <button className="description-button" onClick={removeMock} >Remove Attachment</button>
+                        </div>
+                        <button className="back-button" onClick={() => { setSetup(true); setError(false) }}>BACK</button>
+                    </Fragment> :
+                        <div className="quick-summary empty">
+                            <p>No Mockup Attached.</p>
+                        </div>}
                 </div>
             }
         </Fragment>

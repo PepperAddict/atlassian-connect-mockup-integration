@@ -2,7 +2,7 @@
     "key": "design-integrate",
     "name": "Mockup Design Integration",
     "description": "Integrate with numerous different design services such as Figma, Anima, Infusion, and simple image links",
-    "baseUrl": "https://4b0fad6c1527.ngrok.io",
+    "baseUrl": "https://47cf8fdd30c9.ngrok.io",
     "authentication": {
         "type": "none"
     },
