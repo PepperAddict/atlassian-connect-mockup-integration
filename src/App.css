@@ -1,6 +1,10 @@
 .App {
   text-align: center;
 }
+
+input:focus {
+  outline: 1px solid #989898;
+}
 .input-container {
   margin: 0 3px;
 }
@@ -92,6 +96,7 @@
   margin: 0;
   background: #f1f1f1;
   color: #4A4A4A;
+  min-height: 300px;
 }
 
 .showProject .img-container {
@@ -111,7 +116,7 @@
   overflow: hidden;
 }
 #protoframe {
-  width: 1580px;
+  width: 1200px;
   height: 1280px;
   border: 0;
   transform: scale(0.25);
@@ -119,7 +124,7 @@
 }
 
 .summary-content {
-  display: grid;
+  display: block;
   position: relative;
   padding: 5px;
   box-sizing: border-box;
@@ -129,7 +134,7 @@
 }
 
 .summary-content p {
-  margin: 0px;
+  margin: 10px 0px;
 }
 
 .summary-content label {
@@ -243,4 +248,44 @@
   padding: 15px;
   color: white;
   text-transform: capitalize;
+}
+
+.owner-avatar-container {
+  display: grid;
+  justify-items: end;
+  grid-template-columns: auto 40px;
+  align-items: center;
+  position: absolute;
+  top: 0px;
+  right: 5px;
+}
+
+img.owner-avatar {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.user-list-container {
+  padding: 0px;
+  margin: 0px;
+}
+
+.user-list-container li {
+  list-style: none;
+  background: white;
+  padding: 5px;
+  cursor: pointer;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 40px auto;
+}
+.user-list-container li:hover {
+  background: ghostwhite;
+}
+
+.user-list-input {
+  padding: 5px;
+  border: 1px solid #CECECE;
 }

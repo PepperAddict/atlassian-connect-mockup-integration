@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment } from 'react';
 import moment from 'moment';
 import invLogo from './img/invisionlogo.png'
 import OwnerSelect from './OwnerSelect';
+import AttachMock from './AttachMock';
 
 interface ApiCall {
     issueKey: string
@@ -17,8 +18,8 @@ export default function ApiCall(props: ApiCall) {
     const [currentMock, setCurrentMock] = useState({ "summary": null } as any);
     const [description, addDescription] = useState(null as any);
     const [setup, setSetup] = useState(false as boolean);
-    const [touchOwner, setTouchOwner] = useState(false)
-
+    const [touchOwner, setTouchOwner] = useState(false);
+    const [data, setData] = useState(null);
 
     const APGetProperties = async (key = designIntegrateSummary) => {
 
@@ -32,7 +33,7 @@ export default function ApiCall(props: ApiCall) {
 
         }).then(async (res) => {
             const responseJson = JSON.parse(res)
-            console.log(responseJson)
+            await setData(responseJson)
             await setCurrentMock(responseJson.value)
             await responseJson.description && addDescription(responseJson.description)
             setSetup(true)
@@ -168,10 +169,8 @@ export default function ApiCall(props: ApiCall) {
                     setSetup(true)
                     setError(false)
                     break;
-                case findService('xd'):
-                    console.log('this is xd');
-                    setSetup(true)
-                    setError(false);
+                case findService('adobe'):
+                    setError(true);
                     break;
                 case findService('invis'):
                     setError(false)
@@ -234,11 +233,9 @@ export default function ApiCall(props: ApiCall) {
                         <button className="remove-button">✖</button>
                         <span className="surprise-show">Enter New Mockup URL</span>
                     </span>
-
-                    <div>                    
-                    <OwnerSelect AP={props.AP} issueKey={props.issueKey} setTouchOwner={setTouchOwner}/>
+                
+                    <OwnerSelect data={data} summary={currentMock} AP={props.AP} issueKey={props.issueKey} touchOwner={touchOwner} setTouchOwner={setTouchOwner} entity={designIntegrateSummary}/>
                     
-                    </div>
                     { !touchOwner && <Fragment>
                                             <p><strong>Service:</strong> {currentMock.summary.type}</p>
                     {currentMock.summary.lastEdited ?
@@ -260,26 +257,15 @@ export default function ApiCall(props: ApiCall) {
                 </div>
             </div> :
 
-                <div className="input-container">
-                    <form onSubmit={checkForm} >
-                        <label htmlFor="url" className="url-input">Mockup URL</label>
-                        <span className="input-button"><input id="url" name="url" placeholder="https://..." onChange={e => setUrl(e.target.value)} />
-                            <button type="submit">Attach Mockup</button>
-                        </span>
-                    </form>
-                    {error && <p className="error-message">Sorry, URL is not supported. Please try the supported</p>}
-                    {currentMock.summary ? <Fragment>
-                        <div className="quick-summary taken">
-                            <p>Added on {moment(currentMock.summary.added).format('MMMM Do')}, {moment(currentMock.summary.added).fromNow()}</p>
-                            <p>Service: <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type}</a></p>
-                            <button className="description-button" onClick={removeMock} >Remove Attachment</button>
-                        </div>
-                        <button className="back-button" onClick={() => { setSetup(true); setError(false) }}>BACK</button>
-                    </Fragment> :
-                        <div className="quick-summary empty">
-                            <p>No Mockup Attached.</p>
-                        </div>}
-                </div>
+<AttachMock 
+currentMock={currentMock} 
+removeMock={removeMock} 
+error={error} 
+checkForm={checkForm} 
+setError={setError} 
+setSetup={setSetup}
+setUrl={setUrl}
+/>
             }
         </Fragment>
     )
