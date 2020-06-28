@@ -65,6 +65,28 @@ export default function ApiCall(props: ApiCall) {
             const jsonify = JSON.parse(data)
             setCurrentMock(jsonify)
             addDescription(null)
+        }).then(async () => {
+            //phone everyone about the new addition 
+            const info = JSON.stringify({
+                "htmlBody": `A ticket you are watching has a new mockup attached.`,
+                "subject": "A Mockup Attached to ticket",
+                "textBody": `A ticket you are watching has a new mockup attached. `,
+                "to": {
+                    "watchers": true, 
+                    "reporter": true, 
+                    "assignee": true, 
+                }
+            })
+
+            await props.AP.request({
+                url: `/rest/api/3/issue/${issueKey}/notify`,
+                type: "POST",
+                contentType: "application/json",
+                data: info,
+                experimental: true
+            }).then((response) => console.log(response))
+            .catch((err) => console.log(err))
+
         }).catch((err) => {
             console.log(err)
         });
@@ -101,6 +123,18 @@ export default function ApiCall(props: ApiCall) {
             }
 
         }
+    }
+    const noSupport = (url, service) => {
+        const xdData = JSON.stringify({
+            summary: {
+                type: service,
+                thumbnail: null,
+                url,
+                iframe: null
+            }
+        })
+        apiEntityWrite(xdData)
+
     }
 
     const iFrameIt = async (url, service) => {
@@ -170,7 +204,14 @@ export default function ApiCall(props: ApiCall) {
                     setError(false)
                     break;
                 case findService('adobe'):
-                    setError(true);
+                    noSupport(url, "Adobe XD")
+                    setError(false);
+                    setSetup(true)
+                    break;
+                case findService('google'):
+                    noSupport(url, "Google Drive")
+                    setError(false);
+                    setSetup(true)
                     break;
                 case findService('invis'):
                     setError(false)
@@ -179,7 +220,6 @@ export default function ApiCall(props: ApiCall) {
                     iFrameIt(url, "Invision")
                     break;
                 default:
-                    console.log('no recognized service')
                     setError(true)
             }
         } else if (isItAnImage) {
@@ -223,9 +263,12 @@ export default function ApiCall(props: ApiCall) {
             {setup && currentMock.summary && !error ? <div className="showProject">
                 {currentMock.summary.iframe ?
                     <div className="iframe-container">
-                        <iframe title="design-thumbnail" id="protoframe" src={currentMock.summary.iframe}></iframe></div> :
+                        <iframe title="design-thumbnail" id="protoframe" src={currentMock.summary.iframe}></iframe></div> : (currentMock.summary.thumbnail) ?
                     <div className="img-container">
                         <img src={currentMock.summary.thumbnail} alt="image thumbnail" />
+                    </div> : 
+                    <div className="no-thumbnail-container">
+                        Sorry, No Thumbnail Available
                     </div>}
 
                 <div className="summary-content">
@@ -239,9 +282,9 @@ export default function ApiCall(props: ApiCall) {
                     { !touchOwner && <Fragment>
                                             <p><strong>Service:</strong> {currentMock.summary.type}</p>
                     {currentMock.summary.lastEdited ?
-                        <p><strong>Last modified:</strong> {moment(currentMock.summary.lastEdited).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.lastEdited).fromNow()}</p>
-                        : <p><strong>Added:</strong> {moment(currentMock.summary.added).format('MMMM Do h:mm:ss a')}, {moment(currentMock.summary.added).fromNow()}</p>}
-                    {currentMock.summary.url && <p><strong>Link:</strong> <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type} Link</a></p>}
+                        <p><strong>Last modified:</strong> {moment(currentMock.summary.lastEdited).format('MMMM Do h:mm A')}, {moment(currentMock.summary.lastEdited).fromNow()}</p>
+                        : <p><strong>Added:</strong> {moment(currentMock.summary.added).format('MMMM Do h:mm A')}, {moment(currentMock.summary.added).fromNow()}</p>}
+                    {currentMock.summary.url && <p><strong>Link:</strong> <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type} URL</a></p>}
 
                     <form className="description-container" onSubmit={submitDescription}>
                         <label>
@@ -265,6 +308,8 @@ checkForm={checkForm}
 setError={setError} 
 setSetup={setSetup}
 setUrl={setUrl}
+issueKey={issueKey}
+AP={props.AP}
 />
             }
         </Fragment>

@@ -1,11 +1,14 @@
 import React, {useState, useEffect, Fragment} from 'react';
 import moment from 'moment';
+import FileUpload from './FileUpload'
 
 
 
 export default function AttachMock(props) {
     return (
         <div className="input-container">
+            <FileUpload AP={props.AP} issueKey={props.issueKey}/>
+
         <form onSubmit={props.checkForm} >
             <label htmlFor="url" className="url-input">Mockup URL</label>
             <span className="input-button"><input id="url" name="url" placeholder="https://..." onChange={e => props.setUrl(e.target.value)} />
