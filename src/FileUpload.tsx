@@ -1,8 +1,10 @@
 import React, { useState, useEffect, Fragment } from 'react';
+import Loading from './loading'
 
 
 export default function FileUpload(props) {
-    const [file, setFile] = useState(null as any)
+    const [file, setFile] = useState(null as any);
+    const [loading, setloading] = useState(false)
 
     const theFile = e => {
         console.log(e)
@@ -13,6 +15,7 @@ export default function FileUpload(props) {
 
     const uploadMe = e => {
         e.preventDefault();
+        setloading(true)
 
         let uploadDetail = e.target[0].files[0];
         let name = 'design-integrate-' + uploadDetail.name
@@ -29,7 +32,7 @@ export default function FileUpload(props) {
                 "X-Atlassian-Token": "nocheck"
             }
         }).then((res) => {
-            console.log(res.xhr.upload)
+
             return JSON.parse(res.body);
         }).then(async (text) => {
             const saveInfo = JSON.stringify({
@@ -44,16 +47,17 @@ export default function FileUpload(props) {
             })
             await props.apiCommunication(saveInfo)
 
-        }).then((next) => props.setSetup(true))
+        }).then((next) => {
+            setloading(false)
+            props.setSetup(true) })
         .catch((err) => console.log(err))
     }
     return (
 
-
+<Fragment>
         <form onSubmit={uploadMe} className="input-button">
             <label htmlFor="upload" className="upload-label"> 
                 Upload {file ? file.type + ': ' + file.name.substring(0, 20) + '... ' : "Mockup"}
-                
                 <span className="upload-browse">Browse</span></label>
             <input id="upload" type="file" name="attachment" onChange={e => theFile(e.target.files![0])} />
             <span className="upload-attach">
@@ -68,7 +72,9 @@ export default function FileUpload(props) {
                 </p>
             </span>
             <button type="submit">Attach Mockup</button>
+            
         </form>
-
+        <div className={loading ? "loading show" : "loading hide"}>{loading && <Loading />}</div>
+</Fragment>
     )
 }
