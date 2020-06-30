@@ -196,6 +196,7 @@ export default function ApiCall(props: ApiCall) {
                     setError(false)
                     setSetup(true)
                     apiCommunication('Figma', id)
+                    setSetup(true)
                     break;
                 case findService('animaapp'):
                     iFrameIt(url, "Anima");
@@ -214,9 +215,8 @@ export default function ApiCall(props: ApiCall) {
                     break;
                 case findService('invis'):
                     setError(false)
-                    const invid = userInput[3]
-                    setSetup(true)
                     iFrameIt(url, "Invision")
+                    setSetup(true)
                     break;
                 default:
                     setError(true)
@@ -294,8 +294,6 @@ export default function ApiCall(props: ApiCall) {
                     </form>
                     </Fragment>
                    }
-
-
                 </div>
             </div> :
 

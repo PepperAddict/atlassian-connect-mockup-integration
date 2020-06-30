@@ -4,6 +4,10 @@ import React, { useState, useEffect, Fragment } from 'react';
 export default function FileUpload(props) {
     const [file, setFile] = useState(null as any)
 
+    const theFile = e => {
+        console.log(e)
+        setFile(e)
+    }
 
 
 
@@ -16,8 +20,6 @@ export default function FileUpload(props) {
         let file = new File([uploadDetail], name, {
             type: uploadDetail.type
         });
-
-
         props.AP.request({
             url: '/rest/api/3/issue/' + props.issueKey + '/attachments',
             type: "POST",
@@ -27,9 +29,9 @@ export default function FileUpload(props) {
                 "X-Atlassian-Token": "nocheck"
             }
         }).then((res) => {
+            console.log(res.xhr.upload)
             return JSON.parse(res.body);
         }).then(async (text) => {
-            console.log(text[0])
             const saveInfo = JSON.stringify({
                 summary: {
                     type: text[0].mimeType + " Attachment",
@@ -42,8 +44,8 @@ export default function FileUpload(props) {
             })
             await props.apiCommunication(saveInfo)
 
-        })
-            .catch((err) => console.log(err))
+        }).then((next) => props.setSetup(true))
+        .catch((err) => console.log(err))
     }
     return (
 
@@ -51,8 +53,9 @@ export default function FileUpload(props) {
         <form onSubmit={uploadMe} className="input-button">
             <label htmlFor="upload" className="upload-label"> 
                 Upload {file ? file.type + ': ' + file.name.substring(0, 20) + '... ' : "Mockup"}
-                </label>
-            <input id="upload" type="file" name="attachment" onChange={e => setFile(e.target.files![0])} />
+                
+                <span className="upload-browse">Browse</span></label>
+            <input id="upload" type="file" name="attachment" onChange={e => theFile(e.target.files![0])} />
             <span className="upload-attach">
                 <p className="top-bottom" onClick={() => props.setupload(false)}>
                     <span>🔗</span>

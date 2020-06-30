@@ -13,7 +13,8 @@ export default function AttachMock(props) {
             {upload ? <FileUpload AP={props.AP}
                 issueKey={props.issueKey}
                 apiCommunication={props.apiCommunication} 
-                setupload={setupload}/> :
+                setupload={setupload}
+                setSetup={props.setSetup}/> :
                 <form onSubmit={props.checkForm} >
                     <span className="input-button">
                         <input id="url" name="url" placeholder=" https://..." onChange={e => props.setUrl(e.target.value)} />
