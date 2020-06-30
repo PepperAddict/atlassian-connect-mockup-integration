@@ -72,7 +72,6 @@ export default function ApiCall(props: ApiCall) {
                 "subject": "A Mockup Attached to ticket",
                 "textBody": `A ticket you are watching has a new mockup attached. `,
                 "to": {
-                    "watchers": true, 
                     "reporter": true, 
                     "assignee": true, 
                 }
@@ -208,8 +207,8 @@ export default function ApiCall(props: ApiCall) {
                     setError(false);
                     setSetup(true)
                     break;
-                case findService('google'):
-                    noSupport(url, "Google Drive")
+                case findService('docs.google'):
+                    iFrameIt(url, "Google Drive")
                     setError(false);
                     setSetup(true)
                     break;
@@ -289,7 +288,7 @@ export default function ApiCall(props: ApiCall) {
                     <form className="description-container" onSubmit={submitDescription}>
                         <label>
                             <strong>Description</strong>
-                            <textarea name="description" onChange={e => addDescription(e.target.value)} defaultValue={(currentMock.description) ? currentMock.description : null} />
+                            <textarea name="description" onFocus={e => addDescription(e.target.value)} onChange={e => addDescription(e.target.value)} defaultValue={(currentMock.description) ? currentMock.description : null} />
                             <button className="description-button" type="submit">Submit Description</button>
                         </label>
                     </form>
@@ -310,6 +309,7 @@ setSetup={setSetup}
 setUrl={setUrl}
 issueKey={issueKey}
 AP={props.AP}
+apiCommunication={apiEntityWrite}
 />
             }
         </Fragment>

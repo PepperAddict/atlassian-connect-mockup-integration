@@ -22,13 +22,63 @@ input:focus {
   padding: 5px;
   box-sizing: border-box;
 }
+.upload-attach {
+  display: grid;
+  grid-template-columns: 50px 50px;
+  align-items: center;
+  width: 100%;
+}
 
 .input-button {
   display: grid;
-  grid-template-columns: 1fr 160px;
-  margin: 10px 0px;
+  grid-template-columns: 1fr 100px 160px;
   grid-gap: 10px;
   height: 40px;
+}
+.input-button .top-bottom {
+  display: grid;
+  cursor: pointer;
+  align-items: center;
+  justify-items: center;
+  align-content: center;
+  justify-content: center;
+  margin: 0px;
+  font-size: .8rem;
+  padding: 4px;
+  transition: .2s;
+  width: 40px;
+  height: 40px;
+}
+.input-button .top-bottom:hover {
+  background: #F2F2F2;
+  transition: .2s;
+}
+.upload-button {
+  padding-bottom: 2px;
+  border-bottom: 2px solid;
+}
+
+.input-button .top-bottom.current {
+  background: #F2F2F2;
+}
+
+input#upload {
+  display: none
+}
+label.upload-label {
+  border: 1px solid #A7A7A7;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  box-sizing: border-box;
+  transition: .2s;
+}
+label.upload-label:hover {
+  background: #A7A7A7;
+  color: white;
+  transition: .2s;
 }
 
 .input-button input {
@@ -168,6 +218,7 @@ input:focus {
   background: rgba(255, 255, 255, 0.5);
   border: 1px solid #ccc;
   resize: none;
+  outline: 0px;
 }
 
 .remove-master {
@@ -195,7 +246,7 @@ input:focus {
 
 .remove-master:hover .surprise-show {
 
-  margin-left: 5px;
+  margin-left: 1px;
   opacity: 1;
   transition: .2s;
   background: white;

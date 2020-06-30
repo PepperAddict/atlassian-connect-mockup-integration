@@ -2,61 +2,70 @@ import React, { useState, useEffect, Fragment } from 'react';
 
 
 export default function FileUpload(props) {
+    const [file, setFile] = useState(null as any)
 
-    const getAttachment = async () => {
-        await props.AP.request({
-            url: '/rest/api/3/issue/' + props.issueKey + '?fields=attachment',
-            type: 'GET'
-        }).then((res) => {
-            if (res.xhr.status === 200) return res.body
-        }).then((response) => {
-            console.log(JSON.parse(response))
-        }).catch((err) => {
-            console.log(err)
-        })
-    }
 
-    useEffect(() => {
-        getAttachment()
 
-    }, [])
 
     const uploadMe = e => {
         e.preventDefault();
-        let formUpload = new FormData();
+
         let uploadDetail = e.target[0].files[0];
         let name = 'design-integrate-' + uploadDetail.name
-        let formAgain = {
-            filename: name, 
-            file: uploadDetail.name, 
-            type: uploadDetail.type, 
-            uploaded: uploadDetail.lastModifiedDate
-        }
-        formUpload.append('file', formAgain as any)
-        
+
+        let file = new File([uploadDetail], name, {
+            type: uploadDetail.type
+        });
+
 
         props.AP.request({
             url: '/rest/api/3/issue/' + props.issueKey + '/attachments',
             type: "POST",
             contentType: "multipart/form-data",
-            data: formAgain,
+            data: { file: file },
             headers: {
-                "Accept": "application/json",
-                "Content-Type": "multipart/form-data",
                 "X-Atlassian-Token": "nocheck"
             }
         }).then((res) => {
-            return res.body;
-        }).then((text) => console.log(console.log(text)))
-        .catch((err) => console.log(err))
+            return JSON.parse(res.body);
+        }).then(async (text) => {
+            console.log(text[0])
+            const saveInfo = JSON.stringify({
+                summary: {
+                    type: text[0].mimeType + " Attachment",
+                    url: text[0].content,
+                    added: text[0].created,
+                    thumbnail: text[0].thumbnail,
+                    id: text[0].id
+                }
 
+            })
+            await props.apiCommunication(saveInfo)
 
+        })
+            .catch((err) => console.log(err))
     }
     return (
-        <form onSubmit={uploadMe}>
 
-            <input type="file" name="attachment" />
-            <button type="submit">Submit</button>
+
+        <form onSubmit={uploadMe} className="input-button">
+            <label htmlFor="upload" className="upload-label"> 
+                Upload {file ? file.type + ': ' + file.name.substring(0, 20) + '... ' : "Mockup"}
+                </label>
+            <input id="upload" type="file" name="attachment" onChange={e => setFile(e.target.files![0])} />
+            <span className="upload-attach">
+                <p className="top-bottom" onClick={() => props.setupload(false)}>
+                    <span>🔗</span>
+                    <span>Link</span>
+                </p>
+                <p className="top-bottom current"
+                    onClick={() => props.setupload(true)}>
+                    <span className="upload-button">▲</span>
+                    <span>Upload</span>
+                </p>
+            </span>
+            <button type="submit">Attach Mockup</button>
         </form>
+
     )
 }
