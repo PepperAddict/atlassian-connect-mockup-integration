@@ -35,6 +35,8 @@ input:focus {
   grid-gap: 10px;
   height: 40px;
 }
+
+
 .input-button .top-bottom {
   display: grid;
   cursor: pointer;
@@ -153,7 +155,6 @@ label.upload-label:hover {
 .showProject {
   display: grid;
   grid-template-columns: 300px 1fr;
-  max-height: 330px;
   height: 100%;
   overflow: hidden;
   box-sizing: border-box;
@@ -213,7 +214,9 @@ label.upload-label:hover {
   grid-row-gap: 10px;
   grid-template-rows: 20px 1fr 30px;
 }
-
+.description-container {
+  margin: 12px 0 5px 0;
+}
 .description-button {
   width: 200px;
   justify-self: end;
@@ -297,7 +300,7 @@ label.upload-label:hover {
   width: 25px;
   height: 100%;
   background: #0052CC;
-  margin-left: -40px;
+  margin-left: -30px;
 }
 .quick-summary.empty {
   display: grid;
@@ -336,6 +339,7 @@ label.upload-label:hover {
   top: 0px;
   right: 5px;
 }
+
 
 img.owner-avatar {
   height: 30px;
@@ -419,5 +423,42 @@ img.owner-avatar {
   } 40% { 
     -webkit-transform: scale(1.0);
     transform: scale(1.0);
+  }
+}
+
+
+@media only screen and (max-width: 650px) {
+  .owner-avatar-container {
+    position: relative;
+  }
+
+}
+
+@media only screen and (max-width: 600px) {
+    .input-button {
+    height: auto;
+    grid-template: 
+            "input select"
+            "button button"
+  }
+  .input-button input {
+    grid-area: input
+  }
+  .input-button button {
+    grid-area: button;
+    height: 30px;
+  }
+  .input-button input {
+    grid-area: input
+  }
+
+  .showProject {
+    grid-template-columns: 1fr
+  }
+  .img-container {
+    display: none;
+  }
+  .summary-content {
+    border-left: 0px;
   }
 }

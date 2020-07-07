@@ -1,13 +1,13 @@
 {
     "key": "design-integrate",
     "name": "Mockup Design Integration",
-    "description": "Integrate with numerous different design services such as Figma, Anima, Infusion, and simple image links",
+    "description": "Integrate with numerous different design services and files to showcase your mockup",
     "baseUrl": "https://jira-design.herokuapp.com",
     "authentication": {
         "type": "none"
     },
     "scopes": [
-        "READ", "WRITE", "DELETE", "ADMIN"
+        "READ", "WRITE", "DELETE"
     ],
     "vendor": {
         "name": "Jenearly Ang (Pepper) & Yenith LianTyHao (Design Troll)"

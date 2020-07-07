@@ -2,7 +2,7 @@
     "key": "design-integrate",
     "name": "Mockup Design Integration",
     "description": "Integrate with numerous different design services such as Figma, Anima, Infusion, and simple image links",
-    "baseUrl": "https://6ab294406136.ngrok.io",
+    "baseUrl": "https://08e6a2754d70.ngrok.io",
     "authentication": {
         "type": "none"
     },
@@ -10,7 +10,8 @@
         "READ", "WRITE", "DELETE"
     ],
     "vendor": {
-        "name": "Jenearly Ang (Pepper) & Yenith LianTyHao (Design Troll)"
+        "name": "Jenearly Ang (Pepper) & Yenith LianTyHao (Design Troll)",
+        "url": "https://www.thedesigntroll.com"
     },
     "apiVersion": 1,
     "modules": {
@@ -21,6 +22,11 @@
                 "layout": {
                     "width": "100%",
                     "height": "400px"
+                },
+                "icon": {
+                    "width": 32,
+                    "height": 32,
+                    "url": "/icon.png"
                 },
                 "name": {
                     "value": "Mockup Design Integration"
