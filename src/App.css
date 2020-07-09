@@ -233,6 +233,7 @@ label.upload-label:hover {
   height: 40px;
   transition: .2s;
   color: white;
+  border-radius: 3px;
 }
 .description-button:hover {
   background: rgba(0, 82, 204, 0.9);

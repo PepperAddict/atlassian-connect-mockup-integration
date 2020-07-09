@@ -10,10 +10,32 @@
         "READ", "WRITE", "DELETE"
     ],
     "vendor": {
-        "name": "Jenearly Ang (Pepper) & Yenith LianTyHao (Design Troll)"
+        "name": "Jenearly Ang (PepperAddict) & Yenith LianTyHao (Design Troll)"
     },
     "apiVersion": 1,
     "modules": {
+        "jiraIssueContents": [
+            {
+                "icon": {
+                    "width": 24,
+                    "height": 24,
+                    "url": "/icon.png"
+                },
+                "tooltip": {
+                    "value": "Mockups"
+                },
+                "name": {
+                    "value": "Mockup Design Integration"
+                },
+                "weight": 10,
+                "target": {
+                    "type": "web_panel",
+                    "url": "/index.html"
+                  },
+                "key": "link"
+
+            }
+        ],
         "webPanels": [
             {
                 "url": "/index.html",
