@@ -115,7 +115,7 @@ export default function ApiCall(props: ApiCall) {
                             "lastEdited": res.lastModified
                         }
                     })
-                    apiEntityWrite(figmaObject)
+                    await apiEntityWrite(figmaObject)
                 })
             } else {
                 console.log('Sorry, could not find an ID')

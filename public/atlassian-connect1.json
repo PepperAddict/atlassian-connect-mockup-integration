@@ -2,7 +2,7 @@
     "key": "design-integrate",
     "name": "Mockup Design Integration",
     "description": "Integrate with numerous different design services such as Figma, Anima, Infusion, and simple image links",
-    "baseUrl": "https://08e6a2754d70.ngrok.io",
+    "baseUrl": "https://6ea62294e2db.ngrok.io",
     "authentication": {
         "type": "none"
     },
@@ -15,6 +15,28 @@
     },
     "apiVersion": 1,
     "modules": {
+        "jiraIssueContents": [
+            {
+                "icon": {
+                    "width": 24,
+                    "height": 24,
+                    "url": "/icon.png"
+                },
+                "tooltip": {
+                    "value": "Mockups"
+                },
+                "name": {
+                    "value": "Mockup Design Integration"
+                },
+                "weight": 10,
+                "target": {
+                    "type": "web_panel",
+                    "url": "/index.html"
+                  },
+                "key": "link"
+
+            }
+        ],
         "webPanels": [
             {
                 "url": "/index.html",
@@ -23,11 +45,7 @@
                     "width": "100%",
                     "height": "400px"
                 },
-                "icon": {
-                    "width": 32,
-                    "height": 32,
-                    "url": "/icon.png"
-                },
+                "conditions": [{"condition": "user_is_logged_in"}],
                 "name": {
                     "value": "Mockup Design Integration"
                 },
