@@ -23,17 +23,17 @@ input:focus {
   box-sizing: border-box;
 }
 .upload-attach {
-  display: grid;
-  grid-template-columns: 50px 50px;
+  display: flex;
   align-items: center;
   width: 100%;
 }
 
 .input-button {
   display: grid;
-  grid-template-columns: 1fr 100px 160px;
+  grid-template-columns: 200px 1fr 160px;
   grid-gap: 10px;
   height: 40px;
+  margin-bottom: 15px;
 }
 
 
@@ -45,25 +45,41 @@ input:focus {
   align-content: center;
   justify-content: center;
   margin: 0px;
-  font-size: .8rem;
-  padding: 4px;
   transition: .2s;
-  width: 40px;
-  height: 40px;
+  width: 100px;
+  grid-template-columns: auto auto;
+  grid-gap: 10px;
+  height: 100%;
+  background: #F6F6F8;
+}
+
+.input-button .top-bottom span {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  align-content: center;
+  justify-content: center;
 }
 .input-button .top-bottom:hover {
   background: #F2F2F2;
   transition: .2s;
 }
 .upload-button {
-  padding-bottom: 2px;
-  border-bottom: 2px solid;
   position: relative;
 }
+.top-bottom.url {
+  border-radius: 3px 0px 0px 3px;
+}
 
+.top-bottom.upload {
+  border-radius: 0px 3px 3px 0px;
+}
 .input-button .top-bottom.current {
-  background: #F2F2F2;
-  color: rgb(80, 95, 121)
+  background: #1D54C5;
+  color: white
+}
+.input-button .top-bottom.current img {
+  filter: brightness(5.0);
 }
 
 input#upload {
@@ -107,7 +123,7 @@ label.upload-label:hover {
   padding: 5px;
 }
 .input-button input::placeholder {
-  color: rgb(137, 147, 164);
+  color: #757575;
   padding-left: 15px;
 }
 .input-button button {
@@ -171,6 +187,7 @@ label.upload-label:hover {
   background: #f1f1f1;
   color: #4A4A4A;
   min-height: 300px;
+  position: relative;
 }
 
 .showProject .img-container {
@@ -188,6 +205,7 @@ label.upload-label:hover {
 .iframe-container {
   width: 100%;
   overflow: hidden;
+  height:300px;
 }
 .no-thumbnail-container {
   display: flex;
@@ -224,8 +242,51 @@ label.upload-label:hover {
 .description-container {
   margin: 12px 0 5px 0;
 }
+.descript-button {
+  display: grid;
+  grid-template-columns: auto auto;
+  width: 310px;
+  justify-self: end;
+  grid-gap: 15px;
+}
+.descript-button button, .descript-button span {
+  width: 150px;
+}
+.cancel-descript {
+  display: grid;
+  height: 100%;
+  justify-content: end;
+  align-content: center;
+  cursor: pointer;
+  color: #535F77;
+}
+.cancel-descript:hover {
+  color: black;
+}
+.quick-description {
+  display: grid;
+  grid-template-rows: 30px 1fr 50px;
+}
+.simple-buttons {
+  width: 300px;
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-self: end;
+}
+.simple-buttons > button {
+  border: 0px;
+  cursor: pointer;
+  border-bottom: 3px;
+  outline: 0px;
+
+}
+.simple-buttons > button:hover {
+  text-decoration: underline #1D54C5;
+  color: #1D54C5;
+
+}
+
 .description-button {
-  width: 200px;
   justify-self: end;
   border: 1px solid #D9D9D9;
   background: #0052CC;
@@ -240,13 +301,18 @@ label.upload-label:hover {
   transition: .2s;
 }
 
-.summary-content textarea {
+.summary-content textarea{
   height: 100px;
   box-sizing: border-box;
   background: rgba(255, 255, 255, 0.5);
   border: 1px solid white;
   resize: none;
   outline: 0px;
+}
+.summary-content .description-span {
+  height: 100px;
+  background: none;
+  border: 0px;
 }
 .summary-content textarea:hover {
   border: 1px solid #ccc;
@@ -347,6 +413,7 @@ label.upload-label:hover {
   position: absolute;
   top: 0px;
   right: 5px;
+  z-index: 100;
 }
 
 

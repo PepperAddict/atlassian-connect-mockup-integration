@@ -1,8 +1,9 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import moment from 'moment';
+import React, { useState, useEffect, Fragment, useRef } from 'react';
+
 import invLogo from './img/invisionlogo.png'
 import OwnerSelect from './OwnerSelect';
 import AttachMock from './AttachMock';
+import MockSummary from './MockSummary';
 
 interface ApiCall {
     issueKey: string
@@ -20,7 +21,8 @@ export default function ApiCall(props: ApiCall) {
     const [setup, setSetup] = useState(false as boolean);
     const [touchOwner, setTouchOwner] = useState(false);
     const [data, setData] = useState(null);
-
+    const descriptionRef = useRef(null as any);
+    const [newOwner, setNewOwner] = useState(null)
     const APGetProperties = async (key = designIntegrateSummary) => {
 
         return await props.AP.request(`/rest/api/3/issue/${issueKey}/properties/${key}`,
@@ -72,8 +74,8 @@ export default function ApiCall(props: ApiCall) {
                 "subject": "A Mockup Attached to ticket",
                 "textBody": `A ticket you are watching has a new mockup attached. `,
                 "to": {
-                    "reporter": true, 
-                    "assignee": true, 
+                    "reporter": true,
+                    "assignee": true,
                 }
             })
 
@@ -84,7 +86,7 @@ export default function ApiCall(props: ApiCall) {
                 data: info,
                 experimental: true
             }).then((response) => console.log(response))
-            .catch((err) => console.log(err))
+                .catch((err) => console.log(err))
 
         }).catch((err) => {
             console.log(err)
@@ -249,66 +251,59 @@ export default function ApiCall(props: ApiCall) {
         });
     }
 
-    const submitDescription = (e) => {
+    const submitDescription = async (e) => {
         e.preventDefault();
         const newJson = { ...currentMock, "description": description }
 
         const spreaded = JSON.stringify(newJson)
-        apiEntityWrite(spreaded)
+        await apiEntityWrite(spreaded);
+        setSetup(false)
+    }
+    const cancelDescript = (e) => {
+        e.preventDefault();
+        descriptionRef.current.value = currentMock.description
     }
 
     return (
         <Fragment>
-            {setup && currentMock.summary && !error ? <div className="showProject">
-                {currentMock.summary.iframe ?
-                    <div className="iframe-container">
-                        <iframe title="design-thumbnail" id="protoframe" src={currentMock.summary.iframe}></iframe></div> : (currentMock.summary.thumbnail) ?
-                    <div className="img-container">
-                        <img src={currentMock.summary.thumbnail} alt="image thumbnail" />
-                    </div> : 
-                    <div className="no-thumbnail-container">
-                        Sorry, No Thumbnail Available
-                    </div>}
+            {setup && currentMock.summary && !error ?
+                    <MockSummary
+                        currentMock={currentMock}
+                        submitDescription={submitDescription}
+                        addDescription={addDescription}
+                        modifyMock={modifyMock}
+                        AP={props.AP}
+                        which="full"
+                        data={data}
+                        issueKey={issueKey}
+                        touchOwner={touchOwner}
+                        setTouchOwner={setTouchOwner}
+                        entity={designIntegrateSummary}
+                        removeMock={removeMock} 
+                        newOwner={newOwner}
+                        setNewOwner={setNewOwner}/>
+                :
 
-                <div className="summary-content">
-                    <span className="remove-master" onClick={e => modifyMock(e)}>
-                        <button className="remove-button">✖</button>
-                        <span className="surprise-show">Enter New Mockup URL</span>
-                    </span>
-                
-                    <OwnerSelect data={data} summary={currentMock} AP={props.AP} issueKey={props.issueKey} touchOwner={touchOwner} setTouchOwner={setTouchOwner} entity={designIntegrateSummary}/>
-                    
-                    { !touchOwner && <Fragment>
-                                            <p><strong>Service:</strong> {currentMock.summary.type}</p>
-                    {currentMock.summary.lastEdited ?
-                        <p><strong>Last modified:</strong> {moment(currentMock.summary.lastEdited).format('MMMM Do h:mm A')}, {moment(currentMock.summary.lastEdited).fromNow()}</p>
-                        : <p><strong>Added:</strong> {moment(currentMock.summary.added).format('MMMM Do h:mm A')}, {moment(currentMock.summary.added).fromNow()}</p>}
-                    {currentMock.summary.url && <p><strong>Link:</strong> <a href={currentMock.summary.url} target="_blank" rel="nofollow">{currentMock.summary.type} URL</a></p>}
-
-                    <form className="description-container" onSubmit={submitDescription}>
-                        <label>
-                            <strong>Description</strong>
-                            <textarea name="description" onFocus={e => addDescription(e.target.value)} onChange={e => addDescription(e.target.value)} defaultValue={(currentMock.description) ? currentMock.description : null} />
-                            <button className="description-button" type="submit">Submit Description</button>
-                        </label>
-                    </form>
-                    </Fragment>
-                   }
-                </div>
-            </div> :
-
-<AttachMock 
-currentMock={currentMock} 
-removeMock={removeMock} 
-error={error} 
-checkForm={checkForm} 
-setError={setError} 
-setSetup={setSetup}
-setUrl={setUrl}
-issueKey={issueKey}
-AP={props.AP}
-apiCommunication={apiEntityWrite}
-/>
+                <AttachMock
+                    currentMock={currentMock}
+                    removeMock={removeMock}
+                    modifyMock={modifyMock}
+                    submitDescription={submitDescription}
+                    addDescription={addDescription}
+                    error={error}
+                    touchOwner={touchOwner}
+                    setTouchOwner={setTouchOwner}
+                    checkForm={checkForm}
+                    setError={setError}
+                    setSetup={setSetup}
+                    setUrl={setUrl}
+                    issueKey={issueKey}
+                    AP={props.AP}
+                    data={data}
+                    apiCommunication={apiEntityWrite}
+                    newOwner={newOwner}
+                    setNewOwner={setNewOwner}
+                />
             }
         </Fragment>
     )

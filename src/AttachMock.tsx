@@ -1,6 +1,8 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import moment from 'moment';
-import FileUpload from './FileUpload'
+import FileUpload from './FileUpload';
+import AttachButtons from './AttachButtons';
+import MockSummary from './MockSummary';
 
 
 
@@ -17,31 +19,35 @@ export default function AttachMock(props) {
                 setSetup={props.setSetup}/> :
                 <form onSubmit={props.checkForm} >
                     <span className="input-button">
+                        <AttachButtons setupload={setupload} which="url"/>
                         <input id="url" name="url" placeholder="Paste URL" onChange={e => props.setUrl(e.target.value)} />
-                        <span className="upload-attach"> 
-                            <p className="top-bottom current"> 
-                                <span>🔗</span>
-                                <span>Link</span>
-                            </p> 
-                            <p className="top-bottom" 
-                                onClick={() => setupload(true)}>
-                                    <span className="upload-button">▲</span> 
-                                    <span>Upload</span>
-                            </p>
-                        </span>
+                        
+                        
                         <button type="submit">Attach Mockup</button>
                     </span>
                 </form>
             }
 
             {props.error && <p className="error-message">Sorry, URL is not supported. Please try again.</p>}
+
             {props.currentMock.summary ? <Fragment>
-                <div className="quick-summary taken">
-                    <p>Added on {moment(props.currentMock.summary.added).format('MMMM Do')}, {moment(props.currentMock.summary.added).fromNow()}</p>
-                    <p>Service: <a href={props.currentMock.summary.url} target="_blank" rel="nofollow">{props.currentMock.summary.type}</a></p>
-                    <button className="description-button" onClick={props.removeMock} >Remove Attachment</button>
-                </div>
-                <button className="back-button" onClick={() => { props.setSetup(true); props.setError(false) }}>BACK</button>
+
+                <MockSummary 
+                    currentMock={props.currentMock}
+                    submitDescription={props.submitDescription}
+                    addDescription={props.addDescription}
+                    AP={props.AP}
+                    which="quick"
+                    data={props.data}
+                    setError={props.setError}
+                    setSetup={props.setSetup}
+                    removeMock={props.removeMock}
+                    issueKey={props.issueKey}
+                    modifyMock={props.modifyMock}
+                    touchOwner={props.touchOwner}
+                    setTouchOwner={props.setTouchOwner}
+                    newOwner={props.newOwner}
+                    setNewOwner={props.setNewOwner}/>
             </Fragment> :
                 <div className="quick-summary empty">
                     <p>No Mockup Attached.</p>

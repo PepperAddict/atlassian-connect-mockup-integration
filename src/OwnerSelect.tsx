@@ -4,7 +4,7 @@ export default function OwnerSelect(props) {
     const [ownerList, setOwnerList] = useState([] as any);
     const [currentOwner, thisOwner] = useState(null as any);
     const [newOwner, setNewOwner] = useState(null as any);
-    const [data, setData] = useState(null)
+    const [ mounted, setMounted] = useState(false)
 
     const writeToEntity = async data => {
 
@@ -14,32 +14,32 @@ export default function OwnerSelect(props) {
             contentType: 'application/json',
             data: data,
             experimental: true
-        }).then((res) => {
+        }).then(async () => {
             const jsonify = JSON.parse(data)
-            setNewOwner(jsonify.owner)
+            await setNewOwner(jsonify.owner)
+
         }).catch((err) => {
             console.log(err)
         });
     }
-    const selectNewOwner = (e, owner) => {
-        console.log(props.data)
+    const selectNewOwner = async (e, owner) => {
 
         if (props.data.value) {
             const newOwner = JSON.stringify({
                 summary: {
-                   ...props.summary.summary, 
+                    ...props.summary.summary,
                 },
                 owner: {
                     avatarUrl: owner.avatarUrl,
                     displayName: owner.displayName,
                     accountId: owner.accountId
-                }, 
-                description: (props.summary.description) ? props.summary.description : null 
+                },
+                description: (props.summary.description) ? props.summary.description : null
             })
-            writeToEntity(newOwner)
+            await writeToEntity(newOwner)
+
         }
     }
-
 
     const searchUser = (input) => {
         props.AP.request(`/rest/api/3/user/picker?excludeConnectUsers=true&showAvatar=true&maxResults=4&query="${input}"`).then((data) => {
@@ -63,16 +63,16 @@ export default function OwnerSelect(props) {
             }
 
             await thisOwner(newSet)
-
-
         }).catch((err) => console.log(err))
     }
 
 
-    const touchedOwner = (e, owner) => {
-        selectNewOwner(e, owner)
+    const touchedOwner = async (e, owner) => {
+        await selectNewOwner(e, owner)
         props.setTouchOwner(false)
+        await props.setNewOwner(owner)
     }
+
     const iconTouch = e => {
         if (props.touchOwner === false) {
             props.setTouchOwner(true)
@@ -80,21 +80,27 @@ export default function OwnerSelect(props) {
             props.setTouchOwner(false)
         }
     }
-    useEffect(() => {
 
-        if (props.data.value.hasOwnProperty('owner')) {
-            setNewOwner(props.data.value.owner)
-            console.log(newOwner)
-        } else {
-            getCreator()
+
+    useEffect(() => {
+        setMounted(true)
+        if (mounted) {
+            if (!newOwner && props.data.value.hasOwnProperty('owner')) {
+                thisOwner(props.data.value.owner)
+            } else if (newOwner) {
+                return
+            }
+             else {
+                getCreator()
+            }
         }
 
-
-    }, [])
+    }, [mounted])
 
     return (
         <Fragment>
-            {newOwner ? <p onClick={e => iconTouch(e)} className="owner-avatar-container">Owner: <img className="owner-avatar" src={newOwner.avatarUrl} alt={newOwner.displayName} /></p> : (currentOwner) &&
+            {props.newOwner ? <p onClick={e => iconTouch(e)} className="owner-avatar-container">Owner: <img className="owner-avatar" src={props.newOwner.avatarUrl} alt={props.newOwner.displayName} /></p> :
+            (currentOwner) &&
                 <p onClick={e => iconTouch(e)} className="owner-avatar-container">Owner: <img className="owner-avatar" src={currentOwner.avatarUrl} alt={currentOwner.displayName} /></p>}
             {(props.touchOwner === true) &&
                 <form>
@@ -109,8 +115,6 @@ export default function OwnerSelect(props) {
                     </label>
                 </form>
             }
-
-
         </Fragment>
     )
 }
