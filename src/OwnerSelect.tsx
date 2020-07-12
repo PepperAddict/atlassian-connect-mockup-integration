@@ -103,16 +103,17 @@ export default function OwnerSelect(props) {
             (currentOwner) &&
                 <p onClick={e => iconTouch(e)} className="owner-avatar-container">Owner: <img className="owner-avatar" src={currentOwner.avatarUrl} alt={currentOwner.displayName} /></p>}
             {(props.touchOwner === true) &&
-                <form>
+                <form className="owner-list">
                     <label>Enter Owner of Mockup
                         <input onChange={e => searchUser(e.target.value)} className="user-list-input" />
+                    </label>
                         <ul className="user-list-container">
                             {ownerList.length > 0 && ownerList.slice(0, 4).map((indi, key) => {
                                 return <li key={key} onClick={e => touchedOwner(e, indi)}><img className="owner-avatar" src={indi.avatarUrl} />{indi.html}</li>
                             })}
                         </ul>
 
-                    </label>
+                    
                 </form>
             }
         </Fragment>
