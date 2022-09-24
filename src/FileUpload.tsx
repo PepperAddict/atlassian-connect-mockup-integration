@@ -12,11 +12,9 @@ export default function FileUpload(props) {
         setFile(e)
     }
 
-
-
     const uploadMe = e => {
         e.preventDefault();
-        
+
         if (file) {
             setloading(true)
             let uploadDetail = e.target[0].files[0];
@@ -25,35 +23,45 @@ export default function FileUpload(props) {
             let file = new File([uploadDetail], name, {
                 type: uploadDetail.type
             });
-            props.AP.request({
-                url: '/rest/api/3/issue/' + props.issueKey + '/attachments',
-                type: "POST",
-                contentType: "multipart/form-data",
-                data: { file: file },
-                headers: {
-                    "X-Atlassian-Token": "nocheck"
-                }
-            }).then((res) => {
 
-                return JSON.parse(res.body);
-            }).then(async (text) => {
-                const saveInfo = JSON.stringify({
-                    summary: {
-                        type: text[0].mimeType + " Attachment",
-                        url: text[0].content,
-                        added: text[0].created,
-                        thumbnail: text[0].thumbnail,
-                        id: text[0].id
+            try {
+                props.AP.request({
+                    url: '/rest/api/3/issue/' + props.issueKey + '/attachments',
+                    type: "POST",
+                    contentType: "multipart/form-data",
+                    data: { file: file },
+                    headers: {
+                        "X-Atlassian-Token": "nocheck"
                     }
+                }).then((res) => {
+                    return JSON.parse(res.body);
+                }).then(async (text) => {
 
+                    const saveInfo = JSON.stringify({
+                        summary: {
+                            type: text[0].mimeType + " Attachment",
+                            url: text[0].content,
+                            added: text[0].created,
+                            thumbnail: text[0].thumbnail,
+                            id: text[0].id
+                        }
+
+                    })
+                    await props.apiCommunication(saveInfo)
+
+                }).then((next) => {
+                    setloading(false)
+                    props.setSetup(true)
                 })
-                await props.apiCommunication(saveInfo)
 
-            }).then((next) => {
-                setloading(false)
-                props.setSetup(true)
-            })
-                .catch((err) => console.log(err))
+            } catch (err) {
+                const saveInfo = JSON.stringify({
+                    summary: file
+                })
+                props.apiCommunication(saveInfo)
+
+            }
+
         }
 
 

@@ -97,7 +97,7 @@ export default function ApiCall(props: ApiCall) {
 
     }
 
-    const figmaApi = async (service, id) => {
+    const apiCommunication = async (service, id) => {
         if (service === 'Figma') {
             const apiId = `figma-${id}`;
             if (id) {
@@ -201,7 +201,7 @@ export default function ApiCall(props: ApiCall) {
                     const id = userInput[4];
                     setError(false)
                     setSetup(true)
-                    figmaApi('Figma', id)
+                    apiCommunication('Figma', id)
                     setSetup(true)
                     break;
                 case findService('animaapp'):
@@ -308,7 +308,7 @@ export default function ApiCall(props: ApiCall) {
                     issueKey={issueKey}
                     AP={props.AP}
                     data={data}
-                    figmaApi={apiEntityWrite}
+                    apiCommunication={apiEntityWrite}
                     newOwner={newOwner}
                     setNewOwner={setNewOwner}
                 />
