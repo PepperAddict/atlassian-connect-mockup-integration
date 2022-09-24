@@ -4,7 +4,7 @@ export default function OwnerSelect(props) {
     const [ownerList, setOwnerList] = useState([] as any);
     const [currentOwner, thisOwner] = useState(null as any);
     const [newOwner, setNewOwner] = useState(null as any);
-    const [ mounted, setMounted] = useState(false)
+    const [mounted, setMounted] = useState(false)
 
     const writeToEntity = async data => {
 
@@ -50,20 +50,25 @@ export default function OwnerSelect(props) {
     }
 
     const getCreator = async () => {
-        await props.AP.request(`/rest/api/3/issue/${props.issueKey}`,
-        ).then((data) => {
-            if (data.xhr.status === 200) {
-                return JSON.parse(data.body)
-            }
-        }).then(async (res) => {
-            const newSet = {
-                avatarUrl: res.fields.creator.avatarUrls["48x48"],
-                displayName: res.fields.creator.displayName,
-                email: res.fields.creator.emailAddress
-            }
+        try {
+            await props.AP.request(`/rest/api/3/issue/${props.issueKey}`,
+            ).then((data) => {
+                if (data.xhr.status === 200) {
+                    return JSON.parse(data.body)
+                }
+            }).then(async (res) => {
+                const newSet = {
+                    avatarUrl: res.fields.creator.avatarUrls["48x48"],
+                    displayName: res.fields.creator.displayName,
+                    email: res.fields.creator.emailAddress
+                }
 
-            await thisOwner(newSet)
-        }).catch((err) => console.log(err))
+                await thisOwner(newSet)
+            }).catch((err) => console.log(err))
+        } catch (err) {
+            console.log(err);
+        }
+
     }
 
 
@@ -85,12 +90,14 @@ export default function OwnerSelect(props) {
     useEffect(() => {
         setMounted(true)
         if (mounted) {
+            if (props.data === null) return;
+
             if (!newOwner && props.data.value.hasOwnProperty('owner')) {
                 thisOwner(props.data.value.owner)
             } else if (newOwner) {
                 return
             }
-             else {
+            else {
                 getCreator()
             }
         }
@@ -100,20 +107,20 @@ export default function OwnerSelect(props) {
     return (
         <Fragment>
             {props.newOwner ? <p onClick={e => iconTouch(e)} className="owner-avatar-container">Owner: <img className="owner-avatar" src={props.newOwner.avatarUrl} alt={props.newOwner.displayName} /></p> :
-            (currentOwner) &&
+                (currentOwner) &&
                 <p onClick={e => iconTouch(e)} className="owner-avatar-container">Owner: <img className="owner-avatar" src={currentOwner.avatarUrl} alt={currentOwner.displayName} /></p>}
             {(props.touchOwner === true) &&
                 <form className="owner-list">
                     <label>Enter Owner of Mockup
                         <input onChange={e => searchUser(e.target.value)} className="user-list-input" />
                     </label>
-                        <ul className="user-list-container">
-                            {ownerList.length > 0 && ownerList.slice(0, 4).map((indi, key) => {
-                                return <li key={key} onClick={e => touchedOwner(e, indi)}><img className="owner-avatar" src={indi.avatarUrl} />{indi.html}</li>
-                            })}
-                        </ul>
+                    <ul className="user-list-container">
+                        {ownerList.length > 0 && ownerList.slice(0, 4).map((indi, key) => {
+                            return <li key={key} onClick={e => touchedOwner(e, indi)}><img className="owner-avatar" src={indi.avatarUrl} />{indi.html}</li>
+                        })}
+                    </ul>
 
-                    
+
                 </form>
             }
         </Fragment>

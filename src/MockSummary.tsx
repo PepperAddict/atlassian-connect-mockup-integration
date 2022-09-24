@@ -8,7 +8,8 @@ export default function MockSummary(props) {
         <div className="showProject">
             {props.currentMock.summary.iframe ?
                 <div className="iframe-container">
-                    <iframe title="design-thumbnail" id="protoframe" src={props.currentMock.summary.iframe}></iframe></div> : (props.currentMock.summary.thumbnail) ?
+                    <iframe title="design-thumbnail" id="protoframe" src={props.currentMock.summary.iframe}></iframe>
+                    </div> : (props.currentMock.summary.thumbnail) ?
                     <div className="img-container">
                         <img src={props.currentMock.summary.thumbnail} alt="image thumbnail" />
                     </div> :

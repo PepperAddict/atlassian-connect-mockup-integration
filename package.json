@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "react-scripts build && node server.js",
-    "quick": "react-scripts start",
+    "quick": "react-scripts --openssl-legacy-provider start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

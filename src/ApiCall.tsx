@@ -22,78 +22,82 @@ export default function ApiCall(props: ApiCall) {
     const [touchOwner, setTouchOwner] = useState(false);
     const [data, setData] = useState(null);
     const descriptionRef = useRef(null as any);
-    const [newOwner, setNewOwner] = useState(null)
+    const [newOwner, setNewOwner] = useState(null);
+
+
     const APGetProperties = async (key = designIntegrateSummary) => {
+        try {
+            return await props.AP.request(`/rest/api/3/issue/${issueKey}/properties/${key}`,
+            ).then((data) => {
+                if (data.xhr.status === 200) {
+                    return data.body
+                } else {
+                    setError(true)
+                }
 
-        return await props.AP.request(`/rest/api/3/issue/${issueKey}/properties/${key}`,
-        ).then((data) => {
-            if (data.xhr.status === 200) {
-                return data.body
-            } else {
-                setError(true)
-            }
+            }).then(async (res) => {
+                const responseJson = JSON.parse(res)
+                await setData(responseJson)
+                await setCurrentMock(responseJson.value)
+                await responseJson.description && addDescription(responseJson.description)
+                setSetup(true)
+            });
+        } catch (err) {
+            console.log(err);
+        }
 
-        }).then(async (res) => {
-            const responseJson = JSON.parse(res)
-            await setData(responseJson)
-            await setCurrentMock(responseJson.value)
-            await responseJson.description && addDescription(responseJson.description)
-            setSetup(true)
-        });
     }
 
 
     useEffect(() => {
-        try {
-            APGetProperties(designIntegrateSummary)
-
-
-        } catch {
-            console.log('none')
-        }
-
+        APGetProperties(designIntegrateSummary)
     }, [])
 
 
 
-    const apiEntityWrite = async (data) => {
-        await props.AP.request({
-            url: '/rest/api/3/issue/' + issueKey + '/properties/' + designIntegrateSummary,
-            type: 'PUT',
-            contentType: 'application/json',
-            data: data,
-            experimental: true
-        }).then((res) => {
-            const jsonify = JSON.parse(data)
-            setCurrentMock(jsonify)
-            addDescription(null)
-        }).then(async () => {
-            //phone everyone about the new addition 
-            const info = JSON.stringify({
-                "htmlBody": `A ticket you are watching has a new mockup attached.`,
-                "subject": "A Mockup Attached to ticket",
-                "textBody": `A ticket you are watching has a new mockup attached. `,
-                "to": {
-                    "reporter": true,
-                    "assignee": true,
-                }
-            })
-
+    const apiEntityWrite = async (dataObject) => {
+        try {
             await props.AP.request({
-                url: `/rest/api/3/issue/${issueKey}/notify`,
-                type: "POST",
-                contentType: "application/json",
-                data: info,
+                url: '/rest/api/3/issue/' + issueKey + '/properties/' + designIntegrateSummary,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: data,
                 experimental: true
-            }).then((response) => console.log(response))
-                .catch((err) => console.log(err))
+            }).then((res) => {
+                const jsonify = JSON.parse(dataObject)
+                setCurrentMock(jsonify)
+                addDescription(null)
+            }).then(async () => {
+                //phone everyone about the new addition 
+                const info = JSON.stringify({
+                    "htmlBody": `A ticket you are watching has a new mockup attached.`,
+                    "subject": "A Mockup Attached to ticket",
+                    "textBody": `A ticket you are watching has a new mockup attached. `,
+                    "to": {
+                        "reporter": true,
+                        "assignee": true,
+                    }
+                })
 
-        }).catch((err) => {
-            console.log(err)
-        });
+                await props.AP.request({
+                    url: `/rest/api/3/issue/${issueKey}/notify`,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: info,
+                    experimental: true
+                }).then((response) => console.log(response))
+                    .catch((err) => console.log(err))
+
+            })
+        } catch (err) {
+            const jsonify = JSON.parse(dataObject);
+            setCurrentMock(jsonify);
+            addDescription(null);
+        }
+
     }
 
-    const apiCommunication = async (service, id) => {
+    const figmaApi = async (service, id) => {
         if (service === 'Figma') {
             const apiId = `figma-${id}`;
             if (id) {
@@ -197,7 +201,7 @@ export default function ApiCall(props: ApiCall) {
                     const id = userInput[4];
                     setError(false)
                     setSetup(true)
-                    apiCommunication('Figma', id)
+                    figmaApi('Figma', id)
                     setSetup(true)
                     break;
                 case findService('animaapp'):
@@ -236,6 +240,7 @@ export default function ApiCall(props: ApiCall) {
 
     const removeMock = async e => {
         e.preventDefault();
+        try {
         await props.AP.request({
             url: '/rest/api/3/issue/' + issueKey + '/properties/' + designIntegrateSummary,
             type: 'PUT',
@@ -246,9 +251,12 @@ export default function ApiCall(props: ApiCall) {
             console.log('deleted')
             setCurrentMock({ "summary": null })
             addDescription(null)
-        }).catch((err) => {
-            console.log(err)
-        });
+        })
+        }catch(err) {
+            setCurrentMock({"summary": null});
+            addDescription(null);
+        }
+
     }
 
     const submitDescription = async (e) => {
@@ -267,21 +275,21 @@ export default function ApiCall(props: ApiCall) {
     return (
         <Fragment>
             {setup && currentMock.summary && !error ?
-                    <MockSummary
-                        currentMock={currentMock}
-                        submitDescription={submitDescription}
-                        addDescription={addDescription}
-                        modifyMock={modifyMock}
-                        AP={props.AP}
-                        which="full"
-                        data={data}
-                        issueKey={issueKey}
-                        touchOwner={touchOwner}
-                        setTouchOwner={setTouchOwner}
-                        entity={designIntegrateSummary}
-                        removeMock={removeMock} 
-                        newOwner={newOwner}
-                        setNewOwner={setNewOwner}/>
+                <MockSummary
+                    currentMock={currentMock}
+                    submitDescription={submitDescription}
+                    addDescription={addDescription}
+                    modifyMock={modifyMock}
+                    AP={props.AP}
+                    which="full"
+                    data={data}
+                    issueKey={issueKey}
+                    touchOwner={touchOwner}
+                    setTouchOwner={setTouchOwner}
+                    entity={designIntegrateSummary}
+                    removeMock={removeMock}
+                    newOwner={newOwner}
+                    setNewOwner={setNewOwner} />
                 :
 
                 <AttachMock
@@ -300,7 +308,7 @@ export default function ApiCall(props: ApiCall) {
                     issueKey={issueKey}
                     AP={props.AP}
                     data={data}
-                    apiCommunication={apiEntityWrite}
+                    figmaApi={apiEntityWrite}
                     newOwner={newOwner}
                     setNewOwner={setNewOwner}
                 />
