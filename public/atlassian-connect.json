@@ -1,8 +1,8 @@
 {
     "key": "design-integrate",
-    "name": "Mockup Design Integration",
+    "name": "Design Integration",
     "description": "Integrate with numerous different design services and files to showcase your mockup",
-    "baseUrl": "https://jira-design.herokuapp.com",
+    "baseUrl": "https://d403-73-167-151-3.ngrok.io",
     "authentication": {
         "type": "none"
     },
@@ -25,7 +25,7 @@
                     "value": "Mockups"
                 },
                 "name": {
-                    "value": "Mockup Design Integration"
+                    "value": "Design Integration"
                 },
                 "weight": 10,
                 "target": {
@@ -45,7 +45,7 @@
                     "height": "400px"
                 },
                 "name": {
-                    "value": "Mockup Design Integration"
+                    "value": "Design Integration"
                 },
                 "key": "summary"
             }
