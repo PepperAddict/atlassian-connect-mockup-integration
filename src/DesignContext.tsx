@@ -9,10 +9,11 @@ export const ParentProvider = ({ children }) => {
   const [setup, setSetup] = useState(false as boolean);
   const [theUrl, setTheUrl] = useState(null as any);
   const [description, addDescription] = useState(null as any);
-  const [currentMock, setCurrentMock] = useState({ summary: null } as any);
+  let [currentMock, setCurrentMock] = useState([{ summary: "" }] as any);
   const [content, setContent] = useState(null);
   let AP = (window as any).AP;
   const [designIntegrateSummary] = useState("design-integrate_summary");
+  const [selectedId, setSelectedId] = useState(1);
 
   const getIssueInfo = () => {
     try {
@@ -26,6 +27,10 @@ export const ParentProvider = ({ children }) => {
       setIssueId("10007");
     }
   };
+
+  useEffect(() => {
+    getIssueInfo();
+  }, []);
 
   const apiEntityWrite = async (dataObject) => {
     try {
@@ -42,7 +47,7 @@ export const ParentProvider = ({ children }) => {
       })
         .then((res) => {
           const jsonify = JSON.parse(dataObject);
-          setCurrentMock(jsonify);
+          setCurrentMock((currentMock) => [...currentMock, jsonify]);
           addDescription(null);
         })
         .then(async () => {
@@ -68,8 +73,7 @@ export const ParentProvider = ({ children }) => {
             .catch((err) => console.log(err));
         });
     } catch (err) {
-      const jsonify = JSON.parse(dataObject);
-      setCurrentMock(jsonify);
+      setCurrentMock((currentMock) => [...currentMock, dataObject]);
       addDescription(null);
     }
   };
@@ -89,24 +93,26 @@ export const ParentProvider = ({ children }) => {
         experimental: true,
       }).then((res) => {
         console.log("deleted");
-        setCurrentMock({ summary: null });
+        setCurrentMock([]);
         addDescription(null);
       });
     } catch (err) {
-      setCurrentMock({ summary: null });
+      setCurrentMock([]);
       addDescription(null);
     }
   };
 
   const submitDescription = async (e) => {
     e.preventDefault();
-    const newJson = { ...currentMock, description: description };
-
-    const spreaded = JSON.stringify(newJson);
-    await apiEntityWrite(spreaded);
+    const newJson = currentMock;
+    newJson[selectedId].description = description;
+    await apiEntityWrite([...newJson]);
     setSetup(false);
   };
 
+  if (currentMock) {
+    console.log(currentMock);
+  }
   return (
     <DesignContext.Provider
       value={{
@@ -119,12 +125,13 @@ export const ParentProvider = ({ children }) => {
         content,
         setContent,
         setup,
+        selectedId,
+        setSelectedId,
         setSetup: (e) => setSetup(e),
         addDescription: (e) => addDescription(e),
         theUrl,
         setTheUrl: (e) => setTheUrl(e),
         setCurrentMock: (e) => setCurrentMock(e),
-        getIssueInfo: () => getIssueInfo(),
         submitDescription: (e) => submitDescription(e),
         error,
         setError: (e: any) => setError(e),

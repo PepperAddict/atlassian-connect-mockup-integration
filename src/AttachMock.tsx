@@ -70,6 +70,8 @@ export default function AttachMock(props) {
       }
     } else if (isItAnImage) {
       imageUrl(theUrl, apiEntityWrite);
+      setSetup(true);
+      setError(false);
     } else {
       setError(true);
     }
@@ -103,13 +105,7 @@ export default function AttachMock(props) {
 
       {currentMock.summary ? (
         <Fragment>
-          <MockSummary
-            which="quick"
-            touchOwner={props.touchOwner}
-            setTouchOwner={props.setTouchOwner}
-            newOwner={props.newOwner}
-            setNewOwner={props.setNewOwner}
-          />
+          <MockSummary which="quick" />
         </Fragment>
       ) : (
         <div className="quick-summary empty">

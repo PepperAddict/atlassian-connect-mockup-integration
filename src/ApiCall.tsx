@@ -6,11 +6,7 @@ import { DesignContext } from "./DesignContext";
 import MockSummary from "./MockSummary";
 
 export default function ApiCall() {
-  const [touchOwner, setTouchOwner] = useState(false);
-
-  const [newOwner, setNewOwner] = useState(null);
   const {
-    getIssueInfo,
     issueKey,
     AP,
     addDescription,
@@ -37,7 +33,11 @@ export default function ApiCall() {
         .then(async (res) => {
           const responseJson = JSON.parse(res);
           await setContent(responseJson);
-          await setCurrentMock(responseJson.value);
+          await setCurrentMock((currentMock) => [
+            ...currentMock,
+            responseJson.value,
+          ]);
+
           (await responseJson.description) &&
             addDescription(responseJson.description);
           setSetup(true);
@@ -46,7 +46,6 @@ export default function ApiCall() {
   };
 
   useEffect(() => {
-    getIssueInfo();
     if (issueKey) {
       OnStartCheck(designIntegrateSummary);
     }
@@ -54,22 +53,10 @@ export default function ApiCall() {
 
   return (
     <Fragment>
-      {setup && currentMock.summary && !error ? (
-        <MockSummary
-          currentMock={currentMock}
-          which="full"
-          touchOwner={touchOwner}
-          setTouchOwner={setTouchOwner}
-          newOwner={newOwner}
-          setNewOwner={setNewOwner}
-        />
+      {setup && currentMock[0] !== undefined && !error ? (
+        <MockSummary which="full" />
       ) : (
-        <AttachMock
-          touchOwner={touchOwner}
-          setTouchOwner={setTouchOwner}
-          newOwner={newOwner}
-          setNewOwner={setNewOwner}
-        />
+        <AttachMock />
       )}
     </Fragment>
   );
